@@ -1,0 +1,20 @@
+shared_processors:
+  - type: "ImageRotator"
+    rotation_angle: -90
+
+books:
+  - name: "architectvravona00diet_orig_jp2"
+    image_directory: "/Users/iankonradjohnson/base/abacus/data/archive-pdf/jp2/raw/analysisoforname00worn_1_orig_jp2"
+    save_directory: "/Users/iankonradjohnson/base/abacus/data/archive-pdf/jp2/cropped/analysisoforname00worn_1_orig_jp2"
+    processors:
+      - type: "AutoPageCropper"
+        left:
+          x0: 220
+          y0: 319
+          x1: 3399
+          y1: 5390
+        right:
+          x0:
+          y0:
+          x1:
+          y1:
