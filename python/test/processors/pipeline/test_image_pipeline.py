@@ -1,0 +1,48 @@
+import unittest
+from unittest.mock import MagicMock, patch
+from python.src.processors.image_processor import ImageProcessor
+from PIL import Image, UnidentifiedImageError
+
+from python.src.processors.pipeline.image_pipeline import ImagePipeline
+
+
+class TestImagePipeline(unittest.TestCase):
+
+    def setUp(self):
+        self.mock_processor = MagicMock(spec=ImageProcessor)
+        self.test_image = Image.new("RGB", (10, 10), "white")
+        self.test_image.save = MagicMock()
+        self.mock_processor.process.return_value = self.test_image
+        self.mock_img_path = "/path/to/mock_img.jpg"
+        self.save_dir = "/path/to/save_dir"
+
+    @patch("PIL.Image.open")
+    @patch("os.path.exists", return_value=False)
+    @patch("os.mkdir")
+    def test_process_and_save_image(self, mock_mkdir, mock_exists, mock_open):
+        mock_open.return_value.__enter__.return_value = self.test_image
+        pipeline = ImagePipeline([self.mock_processor], self.save_dir)
+
+        pipeline.process_and_save_image(self.mock_img_path)
+
+        mock_open.assert_called_once_with(self.mock_img_path)
+        self.mock_processor.process.assert_called_once_with(self.test_image)
+        self.test_image.save.assert_called_with("/path/to/save_dir/mock_img.jpg")
+        mock_mkdir.assert_called_once_with(self.save_dir)
+
+    @patch("PIL.Image.open")
+    def test_unidentified_image_error(self, mock_open):
+        mock_open.side_effect = UnidentifiedImageError
+        pipeline = ImagePipeline([self.mock_processor], self.save_dir)
+
+        pipeline.process_and_save_image(self.mock_img_path)
+
+        self.assertRaises(UnidentifiedImageError)
+        self.mock_processor.process.assert_not_called()
+
+    def test_get_save_path_without_save_dir(self):
+        pipeline = ImagePipeline([self.mock_processor], None)
+
+        result_path = pipeline.get_save_path(self.mock_img_path)
+
+        self.assertEqual(result_path, self.mock_img_path)
