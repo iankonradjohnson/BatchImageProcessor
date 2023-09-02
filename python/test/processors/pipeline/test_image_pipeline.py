@@ -7,7 +7,6 @@ from python.src.processors.pipeline.image_pipeline import ImagePipeline
 
 
 class TestImagePipeline(unittest.TestCase):
-
     def setUp(self):
         self.mock_processor = MagicMock(spec=ImageProcessor)
         self.test_image = Image.new("RGB", (10, 10), "white")

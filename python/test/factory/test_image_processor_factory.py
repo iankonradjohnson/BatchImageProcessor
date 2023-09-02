@@ -6,12 +6,8 @@ from python.src.processors.image_rotator import ImageRotator
 
 
 class TestImageProcessorFactory(unittest.TestCase):
-
     def test_create_image_rotator(self):
-        config = {
-            "type": "ImageRotator",
-            "rotation_angle": 45
-        }
+        config = {"type": "ImageRotator", "rotation_angle": 45}
 
         processor = ImageProcessorFactory.create_processor(config)
 
@@ -19,9 +15,7 @@ class TestImageProcessorFactory(unittest.TestCase):
         self.assertEqual(processor.rotation_angle, 45)
 
     def test_create_image_rotator_default_angle(self):
-        config = {
-            "type": "ImageRotator"
-        }
+        config = {"type": "ImageRotator"}
 
         processor = ImageProcessorFactory.create_processor(config)
 
@@ -29,11 +23,7 @@ class TestImageProcessorFactory(unittest.TestCase):
         self.assertEqual(processor.rotation_angle, 0)
 
     def test_create_dual_page_cropper(self):
-        config = {
-            "type": "AutoPageCropper",
-            "left": "some_value",
-            "right": "right"
-        }
+        config = {"type": "AutoPageCropper", "left": "some_value", "right": "right"}
 
         processor = ImageProcessorFactory.create_processor(config)
 
@@ -42,9 +32,7 @@ class TestImageProcessorFactory(unittest.TestCase):
         self.assertEqual(processor.right, config.get("right"))
 
     def test_unknown_processor_type(self):
-        config = {
-            "type": "UnknownType"
-        }
+        config = {"type": "UnknownType"}
 
         with self.assertRaises(ValueError):
             processor = ImageProcessorFactory.create_processor(config)
