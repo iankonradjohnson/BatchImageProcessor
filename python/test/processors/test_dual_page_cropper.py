@@ -24,19 +24,19 @@ class TestDualPageCropper(TestCase):
         cropper = DualPageCropper(config)
 
         # Test left crop
-        cropped_left = cropper.process(self.img)
+        cropped_left = cropper.process(self.img, True)
         self.assertEqual(
             cropped_left.getpixel((40, 100)), (0, 0, 255)
         )  # Check for blue pixel in the middle
 
         # Test right crop
-        cropped_right = cropper.process(self.img)
+        cropped_right = cropper.process(self.img, False)
         self.assertEqual(
             cropped_right.getpixel((60, 100)), (255, 0, 0)
         )  # Check for red pixel in the middle
 
         # Test toggling back to left
-        cropped_left_again = cropper.process(self.img)
+        cropped_left_again = cropper.process(self.img, True)
         self.assertEqual(
             cropped_left_again.getpixel((40, 100)), (0, 0, 255)
         )  # Check for blue pixel again

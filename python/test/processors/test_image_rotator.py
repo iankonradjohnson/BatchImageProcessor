@@ -13,6 +13,6 @@ class TestImageRotator(TestCase):
         img = Image.new("RGB", (100, 200), color="white")
         expected_img = Image.new("RGB", (200, 100), color="white")
 
-        result = self.image_rotator.process(img)
+        result = self.image_rotator.process(img, True)
 
         self.assertEqual(result, expected_img)
