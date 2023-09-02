@@ -5,7 +5,7 @@ from python.src.processors.dual_page_cropper import DualPageCropper
 from python.src.processors.image_rotator import ImageRotator
 
 
-class ImageProcessorFactoryTest(unittest.TestCase):
+class TestImageProcessorFactory(unittest.TestCase):
 
     def test_create_image_rotator(self):
         config = {
