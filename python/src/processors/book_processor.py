@@ -33,10 +33,17 @@ class BookProcessor:
         """Process a single book based on the provided configuration."""
 
         input_dir = self.book_config["image_directory"]
-        image_path_list = sorted([
-            os.path.join(input_dir, filename) for filename in os.listdir(input_dir, )
-        ])
-        image_path_list = [f for f in image_path_list if not os.path.basename(f).startswith('.')]
+        image_path_list = sorted(
+            [
+                os.path.join(input_dir, filename)
+                for filename in os.listdir(
+                    input_dir,
+                )
+            ]
+        )
+        image_path_list = [
+            f for f in image_path_list if not os.path.basename(f).startswith(".")
+        ]
 
         is_left = True
         with ThreadPoolExecutor() as executor:
