@@ -1,0 +1,35 @@
+name: Run My Script with Venv and Dependencies
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.x # Replace with your desired Python version
+
+    - name: Install dependencies from requirements.txt
+      run: |
+        python -m venv venv
+        source venv/bin/activate
+        pip install -r requirements.txt
+
+    - name: Install package using setup.py
+      run: |
+        source venv/bin/activate
+        pip install -e .
+
+    - name: Run my script
+      run: |
+        source venv/bin/activate
+        ./run_checks.sh
