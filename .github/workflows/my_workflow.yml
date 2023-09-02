@@ -32,4 +32,4 @@ jobs:
     - name: Run my script
       run: |
         source venv/bin/activate
-        ./my_script.sh
+        ./run_checks.sh
