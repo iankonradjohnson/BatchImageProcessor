@@ -1,18 +1,40 @@
 from unittest import TestCase
 
-from PIL import Image
+from PIL import Image, ImageDraw
 
 from python.src.processors.image_rotator import ImageRotator
+
+
+def create_initial_image():
+    img = Image.new("RGB", (100, 200), color="white")
+    draw = ImageDraw.Draw(img)
+    # Draw a triangle pointing upwards
+    draw.polygon([(40, 50), (60, 50), (50, 30)], fill="black")
+    return img
 
 
 class TestImageRotator(TestCase):
     def setUp(self):
         self.image_rotator = ImageRotator(90)
 
-    def test_process(self):
-        img = Image.new("RGB", (100, 200), color="white")
-        expected_img = Image.new("RGB", (200, 100), color="white")
+    def test_process_left(self):
+        img = create_initial_image()
+
+        # Expected: triangle pointing to the left
+        expected_img = img.rotate(90, resample=Image.Resampling.BICUBIC, expand=True)
 
         result = self.image_rotator.process(img, True)
 
-        self.assertEqual(result, expected_img)
+        # Compare properties of the resulting image and the expected image
+        self.assertTrue(result == expected_img)
+
+    def test_process_right(self):
+        img = create_initial_image()
+
+        # Expected: triangle pointing to the right
+        expected_img = img.rotate(-90, resample=Image.Resampling.BICUBIC, expand=True)
+
+        result = self.image_rotator.process(img, False)
+
+        # Compare properties of the resulting image and the expected image
+        self.assertTrue(result == expected_img)

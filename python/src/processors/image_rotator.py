@@ -7,6 +7,5 @@ class ImageRotator(ImageProcessor):
         self.rotation_angle = rotation_angle
 
     def process(self, img: Image, is_left: bool) -> Image:
-        return img.rotate(
-            self.rotation_angle, resample=Image.Resampling.BICUBIC, expand=True
-        )
+        angle = self.rotation_angle * (1 if is_left else -1)
+        return img.rotate(angle, resample=Image.Resampling.BICUBIC, expand=True)
