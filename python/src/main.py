@@ -1,7 +1,7 @@
-import os
 import sys
-import yaml
 from concurrent.futures import ThreadPoolExecutor
+
+import yaml
 
 from python.src.processors.book_processor import BookProcessor
 
@@ -20,16 +20,14 @@ def main():
 
     config_file = sys.argv[1]
 
-    with open(config_file, "r") as config_stream:
+    with open(config_file, "r", encoding="utf-8") as config_stream:
         config_data = yaml.safe_load(config_stream)
 
     shared_processors = config_data.get("shared_processors", [])
 
     with ThreadPoolExecutor() as executor:
-        futures = [
+        for book_config in config_data.get("books", []):
             executor.submit(process_book, book_config, shared_processors)
-            for book_config in config_data.get("books", [])
-        ]
 
 
 if __name__ == "__main__":

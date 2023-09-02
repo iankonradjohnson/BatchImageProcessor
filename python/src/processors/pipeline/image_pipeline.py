@@ -22,11 +22,11 @@ class ImagePipeline:
 
                 img.save(self.get_save_path(img_path))
 
-        except UnidentifiedImageError as e:
-            print(e)
+        except UnidentifiedImageError as error:
+            print(error)
 
     def get_save_path(self, img_path: str) -> str:
         if self.save_dir is None:
             return img_path
-        else:
-            return os.path.join(self.save_dir, os.path.basename(img_path))
+
+        return os.path.join(self.save_dir, os.path.basename(img_path))

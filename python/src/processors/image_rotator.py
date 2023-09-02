@@ -1,5 +1,5 @@
-from python.src.processors.image_processor import ImageProcessor
 from PIL import Image
+from python.src.processors.image_processor import ImageProcessor
 
 
 class ImageRotator(ImageProcessor):
@@ -7,4 +7,6 @@ class ImageRotator(ImageProcessor):
         self.rotation_angle = rotation_angle
 
     def process(self, img: Image) -> Image:
-        return img.rotate(self.rotation_angle, resample=Image.BICUBIC, expand=True)
+        return img.rotate(
+            self.rotation_angle, resample=Image.Resampling.BICUBIC, expand=True
+        )
