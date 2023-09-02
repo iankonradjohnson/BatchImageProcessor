@@ -13,3 +13,5 @@ class ImageProcessorFactory:
             return ImageRotator(config.get("rotation_angle", 0))
         elif processor_type == "AutoPageCropper":
             return DualPageCropper(config)
+        else:
+            raise ValueError("Processor invalid")
