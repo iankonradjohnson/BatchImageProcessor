@@ -8,26 +8,21 @@ class DualPageCropper(ImageProcessor):
     def __init__(self, config):
         self.left = config.get("left")
         self.right = config.get("right")
-
-        # Initialize curr_page to self.left
-        self.curr_page = self.left
+        self.image_size = config.get("image_size")
 
     def process(self, img: Image, is_left: bool) -> Image:
         img_array = np.array(img)
 
-        x_start = self.curr_page.get("x0")
-        y_start = self.curr_page.get("y0")
-        x_end = self.curr_page.get("x1")
-        y_end = self.curr_page.get("y1")
-
         # Toggle between left and right for the next process
-        if self.curr_page == self.left:
-            self.curr_page = self.right
-        else:
-            self.curr_page = self.left
+        curr_page = self.left if is_left else self.right
+
+        x_start = curr_page.get("x_start")
+        y_start = curr_page.get("y_start")
+        width = self.image_size.get("width")
+        height = self.image_size.get("height")
 
         # Crop using numpy array slicing
-        cropped_array = img_array[y_start:y_end, x_start:x_end]
+        cropped_array = img_array[y_start : y_start + height, x_start : x_start + width]
 
         # Convert back to PIL Image
         cropped_img = Image.fromarray(cropped_array)

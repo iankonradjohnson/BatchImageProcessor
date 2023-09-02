@@ -1,15 +1,15 @@
 import sys
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ProcessPoolExecutor
 
 import yaml
 
 from python.src.processors.book_processor import BookProcessor
 
 
-def process_book(book_config, shared_processors):
+def process_book(book_config):
     """Process a single book."""
     print(f"Processing book: {book_config['name']}")
-    book_processor = BookProcessor(book_config, shared_processors)
+    book_processor = BookProcessor(book_config)
     book_processor.process_book()
 
 
@@ -23,11 +23,9 @@ def main():
     with open(config_file, "r", encoding="utf-8") as config_stream:
         config_data = yaml.safe_load(config_stream)
 
-    shared_processors = config_data.get("shared_processors", [])
-
-    with ThreadPoolExecutor() as executor:
+    with ProcessPoolExecutor() as executor:
         for book_config in config_data.get("books", []):
-            executor.submit(process_book, book_config, shared_processors)
+            executor.submit(process_book, book_config)
 
 
 if __name__ == "__main__":

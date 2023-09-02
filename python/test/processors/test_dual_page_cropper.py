@@ -1,6 +1,5 @@
 import unittest
 from unittest import TestCase
-
 from PIL import Image, ImageDraw
 from python.src.processors.dual_page_cropper import DualPageCropper
 
@@ -15,27 +14,41 @@ class TestDualPageCropper(TestCase):
         draw.rectangle([10, 10, 90, 190], fill="blue")  # Left rect
         draw.rectangle([110, 10, 190, 190], fill="red")  # Right rect
 
-    def test_process(self):
+    def test_left_crop(self):
         config = {
-            "left": {"x0": 0, "y0": 0, "x1": 100, "y1": 200},
-            "right": {"x0": 100, "y0": 0, "x1": 200, "y1": 200},
+            "left": {"x_start": 0, "y_start": 0},
+            "right": {"x_start": 100, "y_start": 0},
+            "image_size": {"width": 100, "height": 200},
         }
 
         cropper = DualPageCropper(config)
-
-        # Test left crop
         cropped_left = cropper.process(self.img, True)
         self.assertEqual(
             cropped_left.getpixel((40, 100)), (0, 0, 255)
         )  # Check for blue pixel in the middle
 
-        # Test right crop
+    def test_right_crop(self):
+        config = {
+            "left": {"x_start": 0, "y_start": 0},
+            "right": {"x_start": 100, "y_start": 0},
+            "image_size": {"width": 100, "height": 200},
+        }
+
+        cropper = DualPageCropper(config)
         cropped_right = cropper.process(self.img, False)
         self.assertEqual(
-            cropped_right.getpixel((60, 100)), (255, 0, 0)
+            cropped_right.getpixel((40, 100)), (255, 0, 0)
         )  # Check for red pixel in the middle
 
-        # Test toggling back to left
+    def test_toggle_back_to_left(self):
+        config = {
+            "left": {"x_start": 0, "y_start": 0},
+            "right": {"x_start": 100, "y_start": 0},
+            "image_size": {"width": 100, "height": 200},
+        }
+
+        cropper = DualPageCropper(config)
+        cropper.process(self.img, False)  # Crop right first
         cropped_left_again = cropper.process(self.img, True)
         self.assertEqual(
             cropped_left_again.getpixel((40, 100)), (0, 0, 255)

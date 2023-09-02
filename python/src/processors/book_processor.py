@@ -1,26 +1,19 @@
 import os
-from concurrent.futures.thread import ThreadPoolExecutor
+from concurrent.futures import ProcessPoolExecutor
+
 from python.src.factory.image_processor_factory import ImageProcessorFactory
 from python.src.processors.pipeline.image_pipeline import ImagePipeline
 
 
 class BookProcessor:
-    def __init__(self, book_config, shared_processors):
+    def __init__(self, book_config):
         self.book_config = book_config
-        self.shared_processors = shared_processors
 
     def _create_pipeline(self):
-        # Combine shared processors with book-specific processors
         processors = [
             ImageProcessorFactory.create_processor(config)
-            for config in self.shared_processors
+            for config in self.book_config["processors"]
         ]
-        processors.extend(
-            [
-                ImageProcessorFactory.create_processor(config)
-                for config in self.book_config["processors"]
-            ]
-        )
 
         save_dir = self.book_config["save_directory"]
         return ImagePipeline(processors, save_dir)
@@ -46,7 +39,7 @@ class BookProcessor:
         ]
 
         is_left = True
-        with ThreadPoolExecutor() as executor:
+        with ProcessPoolExecutor() as executor:
             for image_path in image_path_list:
                 executor.submit(self._process_single_image, image_path, is_left)
-                is_left = False
+                is_left = not is_left
