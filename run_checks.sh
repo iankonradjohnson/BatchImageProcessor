@@ -9,6 +9,8 @@ report_failure() {
     exit 1
 }
 
+pip install .
+
 # Run unit tests
 python -m unittest discover || report_failure
 

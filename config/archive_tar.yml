@@ -1,20 +1,41 @@
 shared_processors:
-  - type: "ImageRotator"
-    rotation_angle: -90
 
 books:
-  - name: "architectvravona00diet_orig_jp2"
+  - name: "analysisoforname00worn_1_orig_jp2"
     image_directory: "/Users/iankonradjohnson/base/abacus/data/archive-pdf/jp2/raw/analysisoforname00worn_1_orig_jp2"
     save_directory: "/Users/iankonradjohnson/base/abacus/data/archive-pdf/jp2/cropped/analysisoforname00worn_1_orig_jp2"
     processors:
+
       - type: "AutoPageCropper"
         left:
-          x0: 220
-          y0: 319
-          x1: 3399
-          y1: 5390
+          x_start: 171
+          y_start: 127
         right:
-          x0:
-          y0:
-          x1:
-          y1:
+          x_start: 259
+          y_start: 209
+        image_size:
+          width: 5170
+          height: 3250
+
+      - type: "ImageRotator"
+        rotation_angle: 90
+
+  - name: "architectureimpro00lang_orig_jp2"
+    image_directory: "/Users/iankonradjohnson/base/abacus/data/archive-pdf/jp2/raw/architectureimpro00lang_orig_jp2"
+    save_directory: "/Users/iankonradjohnson/base/abacus/data/archive-pdf/jp2/cropped/architectureimpro00lang_orig_jp2"
+    processors:
+      - type: "AutoPageCropper"
+        left:
+          x_start: 472
+          y_start: 0
+        right:
+          x_start: 676
+          y_start: 128
+        image_size:
+          width: 3324
+          height: 2580
+
+      - type: "ImageRotator"
+        rotation_angle: 90
+
+

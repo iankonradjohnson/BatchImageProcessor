@@ -22,10 +22,10 @@ class TestImagePipeline(unittest.TestCase):
         mock_open.return_value.__enter__.return_value = self.test_image
         pipeline = ImagePipeline([self.mock_processor], self.save_dir)
 
-        pipeline.process_and_save_image(self.mock_img_path)
+        pipeline.process_and_save_image(self.mock_img_path, True)
 
         mock_open.assert_called_once_with(self.mock_img_path)
-        self.mock_processor.process.assert_called_once_with(self.test_image)
+        self.mock_processor.process.assert_called_once_with(self.test_image, True)
         self.test_image.save.assert_called_with("/path/to/save_dir/mock_img.jpg")
         mock_mkdir.assert_called_once_with(self.save_dir)
 
@@ -34,7 +34,7 @@ class TestImagePipeline(unittest.TestCase):
         mock_open.side_effect = UnidentifiedImageError
         pipeline = ImagePipeline([self.mock_processor], self.save_dir)
 
-        pipeline.process_and_save_image(self.mock_img_path)
+        pipeline.process_and_save_image(self.mock_img_path, True)
 
         self.assertRaises(UnidentifiedImageError)
         self.mock_processor.process.assert_not_called()
