@@ -5,7 +5,6 @@ from python.src.processors.image_processor import ImageProcessor
 
 
 class DualPageCropper(ImageProcessor):
-
     def __init__(self, config):
         self.left = config.get("left")
         self.right = config.get("right")
@@ -34,4 +33,3 @@ class DualPageCropper(ImageProcessor):
         cropped_img = Image.fromarray(cropped_array)
 
         return cropped_img
-

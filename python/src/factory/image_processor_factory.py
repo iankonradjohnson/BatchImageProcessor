@@ -6,7 +6,6 @@ from python.src.processors.dual_page_cropper import DualPageCropper
 class ImageProcessorFactory:
     @staticmethod
     def create_processor(config) -> ImageProcessor:
-
         processor_type = config.get("type")
 
         if processor_type == "ImageRotator":
