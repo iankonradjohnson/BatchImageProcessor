@@ -20,7 +20,7 @@ class TestBookProcessor(TestCase):
         mock_listdir.return_value = ["image1.jpg", "image2.jpg"]
 
         # When
-        processor.process()
+        processor.process_book()
 
         # Then
         self.assertEqual(

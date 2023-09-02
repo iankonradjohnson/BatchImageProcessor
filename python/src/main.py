@@ -10,7 +10,7 @@ def process_book(book_config, shared_processors):
     """Process a single book."""
     print(f"Processing book: {book_config['name']}")
     book_processor = BookProcessor(book_config, shared_processors)
-    book_processor.process()
+    book_processor.process_book()
 
 
 def main():

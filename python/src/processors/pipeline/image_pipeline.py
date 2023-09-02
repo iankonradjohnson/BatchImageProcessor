@@ -11,11 +11,11 @@ class ImagePipeline:
         self.processors = processors
         self.save_dir = save_dir
 
-    def process_and_save_image(self, img_path: str):
+    def process_and_save_image(self, img_path: str, is_left: bool) -> None:
         try:
             with Image.open(img_path) as img:
                 for processor in self.processors:
-                    img = processor.process(img)
+                    img = processor.process(img, is_left)
 
                 if not os.path.exists(self.save_dir):
                     os.mkdir(self.save_dir)

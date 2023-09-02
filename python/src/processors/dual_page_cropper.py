@@ -12,7 +12,7 @@ class DualPageCropper(ImageProcessor):
         # Initialize curr_page to self.left
         self.curr_page = self.left
 
-    def process(self, img: Image) -> Image:
+    def process(self, img: Image, is_left: bool) -> Image:
         img_array = np.array(img)
 
         x_start = self.curr_page.get("x0")
