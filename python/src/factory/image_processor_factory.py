@@ -9,7 +9,7 @@ class ImageProcessorFactory:
         processor_type = config.get("type")
 
         if processor_type == "ImageRotator":
-            return ImageRotator(config.get("rotation_angle", 0))
+            return ImageRotator(config)
 
         if processor_type == "AutoPageCropper":
             return DualPageCropper(config)
