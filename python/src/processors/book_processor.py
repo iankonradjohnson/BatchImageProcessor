@@ -9,7 +9,7 @@ class BookProcessor:
     def __init__(self, book_config):
         self.book_config = book_config
 
-    def _create_pipeline(self):
+    def _create_pipeline(self) -> ImagePipeline:
         processors = [
             ImageProcessorFactory.create_processor(config)
             for config in self.book_config["processors"]

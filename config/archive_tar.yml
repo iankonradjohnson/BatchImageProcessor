@@ -5,37 +5,42 @@ books:
     image_directory: "/Users/iankonradjohnson/base/abacus/data/archive-pdf/jp2/raw/analysisoforname00worn_1_orig_jp2"
     save_directory: "/Users/iankonradjohnson/base/abacus/data/archive-pdf/jp2/cropped/analysisoforname00worn_1_orig_jp2"
     processors:
+      - type: "ImageRotator"
+        left:
+          angle: 90
+        right:
+          angle: -90
 
       - type: "AutoPageCropper"
         left:
-          x_start: 171
-          y_start: 127
+          x_start: 226
+          y_start: 292
         right:
-          x_start: 259
-          y_start: 209
+          x_start: 330
+          y_start: 297
         image_size:
-          width: 5170
-          height: 3250
+          width: 3163
+          height: 5143
 
-      - type: "ImageRotator"
-        rotation_angle: 90
-
-  - name: "architectureimpro00lang_orig_jp2"
-    image_directory: "/Users/iankonradjohnson/base/abacus/data/archive-pdf/jp2/raw/architectureimpro00lang_orig_jp2"
-    save_directory: "/Users/iankonradjohnson/base/abacus/data/archive-pdf/jp2/cropped/architectureimpro00lang_orig_jp2"
-    processors:
-      - type: "AutoPageCropper"
-        left:
-          x_start: 472
-          y_start: 0
-        right:
-          x_start: 676
-          y_start: 128
-        image_size:
-          width: 3324
-          height: 2580
-
-      - type: "ImageRotator"
-        rotation_angle: 90
+#  - name: "architectureimpro00lang_orig_jp2"
+#    image_directory: "/Users/iankonradjohnson/base/abacus/data/archive-pdf/jp2/raw/architectureimpro00lang_orig_jp2"
+#    save_directory: "/Users/iankonradjohnson/base/abacus/data/archive-pdf/jp2/cropped/architectureimpro00lang_orig_jp2"
+#    processors:
+#      - type: "AutoPageCropper"
+#        left:
+#          x_start: 472
+#          y_start: 0
+#        right:
+#          x_start: 676
+#          y_start: 128
+#        image_size:
+#          width: 3324
+#          height: 2580
+#
+#      - type: "ImageRotator"
+#        right:
+#          rotation_angle: 90
+#        left:
+#          rotation_angle: -90
 
 

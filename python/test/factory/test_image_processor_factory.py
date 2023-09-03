@@ -7,12 +7,13 @@ from python.src.processors.image_rotator import ImageRotator
 
 class TestImageProcessorFactory(unittest.TestCase):
     def test_create_image_rotator(self):
-        config = {"type": "ImageRotator", "rotation_angle": 45}
+        config = {"type": "ImageRotator", "left": "left", "right": "right"}
 
         processor = ImageProcessorFactory.create_processor(config)
 
         self.assertIsInstance(processor, ImageRotator)
-        self.assertEqual(processor.rotation_angle, 45)
+        self.assertEqual(processor.left, config.get("left"))
+        self.assertEqual(processor.right, config.get("right"))
 
     def test_create_image_rotator_default_angle(self):
         config = {"type": "ImageRotator"}
@@ -20,10 +21,11 @@ class TestImageProcessorFactory(unittest.TestCase):
         processor = ImageProcessorFactory.create_processor(config)
 
         self.assertIsInstance(processor, ImageRotator)
-        self.assertEqual(processor.rotation_angle, 0)
+        self.assertEqual(processor.left, None)
+        self.assertEqual(processor.right, None)
 
     def test_create_dual_page_cropper(self):
-        config = {"type": "AutoPageCropper", "left": "some_value", "right": "right"}
+        config = {"type": "AutoPageCropper", "left": "left", "right": "right"}
 
         processor = ImageProcessorFactory.create_processor(config)
 
