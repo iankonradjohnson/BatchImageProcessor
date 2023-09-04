@@ -1,24 +1,635 @@
-shared_processors:
+input_dir: "/Users/iankonradjohnson/base/abacus/data/archive-pdf/raw"
+output_dir: "/Users/iankonradjohnson/base/abacus/data/archive-pdf/processed/"
 
 books:
-  - name: "analysisoforname00worn_1_orig_jp2"
-    image_directory: "/Users/iankonradjohnson/base/abacus/data/archive-pdf/jp2/raw/analysisoforname00worn_1_orig_jp2"
-    save_directory: "/Users/iankonradjohnson/base/abacus/data/archive-pdf/jp2/cropped/analysisoforname00worn_1_orig_jp2"
+#  - name: "analysisoforname00worn_1_orig_jp2"
+#    processors:
+#
+#      - type: "AutoPageCropper"
+#        left:
+#          x_start: 171
+#          y_start: 127
+#        right:
+#          x_start: 259
+#          y_start: 209
+#        image_size:
+#          width: 5170
+#          height: 3250
+#
+#      - type: "ImageRotator"
+#        left:
+#          angle: 90
+#        right:
+#          angle: -90
+#
+#      - type: "ThresholdFilter"
+#        min_thresh: 100
+#        max_thresh: 200
+#
+#
+#  - name: "architectureimpro00lang_orig_jp2"
+#    processors:
+#
+#      - type: "AutoPageCropper"
+#        left:
+#          x_start: 488
+#          y_start: 0
+#        right:
+#          x_start: 700
+#          y_start: 140
+#        image_size:
+#          width: 3336
+#          height: 2580
+#
+#      - type: "ImageRotator"
+#        left:
+#          angle: 90
+#        right:
+#          angle: -90
+#
+#      - type: "ThresholdFilter"
+#        min_thresh: 100
+#        max_thresh: 200
+#
+#
+#  - name: "architectvravona00diet_orig_jp2"
+#    processors:
+#
+#      - type: "AutoPageCropper"
+#        left:
+#          x_start: 407
+#          y_start: 462
+#        right:
+#          x_start: 616
+#          y_start: 418
+#        image_size:
+#          width: 4741
+#          height: 3322
+#
+#      - type: "ImageRotator"
+#        left:
+#          angle: 90
+#        right:
+#          angle: -90
+#
+#      - type: "ThresholdFilter"
+#        min_thresh: 100
+#        max_thresh: 200
+#
+#  - name: "architectvravonn00meye_orig_jp2"
+#    processors:
+#
+#      - type: "AutoPageCropper"
+#        left:
+#          x_start: 492
+#          y_start: 580
+#        right:
+#          x_start: 568
+#          y_start: 564
+#        image_size:
+#          width: 3280
+#          height: 2048
+#
+#      - type: "ImageRotator"
+#        left:
+#          angle: 90
+#        right:
+#          angle: -90
+#
+#      - type: "ThresholdFilter"
+#        min_thresh: 100
+#        max_thresh: 200
+#
+#
+#  - name: "carpentrybuildin5188unse_orig_jp2"
+#    processors:
+#
+#      - type: "AutoPageCropper"
+#        left:
+#          x_start: 517
+#          y_start: 435
+#        right:
+#          x_start: 660
+#          y_start: 484
+#        image_size:
+#          width: 4526
+#          height: 3047
+#
+#      - type: "ImageRotator"
+#        left:
+#          angle: 90
+#        right:
+#          angle: -90
+#
+#      - type: "ThresholdFilter"
+#        min_thresh: 100
+#        max_thresh: 200
+#
+#  - name: "cartouches00mite_orig_jp2"
+#    processors:
+#
+#      - type: "AutoPageCropper"
+#        left:
+#          x_start: 1111
+#          y_start: 1086
+#        right:
+#          x_start: 633
+#          y_start: 1076
+#        image_size:
+#          width: 3822
+#          height: 2668
+#
+#      - type: "ImageRotator"
+#        left:
+#          angle: 90
+#        right:
+#          angle: -90
+#
+#      - type: "ThresholdFilter"
+#        min_thresh: 100
+#        max_thresh: 200
+#
+#  - name: "commensuracionpa00arfe_orig_jp2"
+#    processors:
+#
+#      - type: "AutoPageCropper"
+#        left:
+#          x_start: 424
+#          y_start: 456
+#        right:
+#          x_start: 604
+#          y_start: 464
+#        image_size:
+#          width: 3460
+#          height: 2188
+#
+#      - type: "ImageRotator"
+#        left:
+#          angle: 90
+#        right:
+#          angle: -90
+#
+#      - type: "ThresholdFilter"
+#        min_thresh: 100
+#        max_thresh: 200
+#
+#
+#  - name: "designersplanboo00farn_orig_jp2"
+#    processors:
+#
+#      - type: "AutoPageCropper"
+#        left:
+#          x_start: 451
+#          y_start: 286
+#        right:
+#          x_start: 913
+#          y_start: 627
+#        image_size:
+#          width: 4796
+#          height: 3377
+#
+#      - type: "ImageRotator"
+#        left:
+#          angle: 90
+#        right:
+#          angle: -90
+#
+#      - type: "ThresholdFilter"
+#        min_thresh: 100
+#        max_thresh: 200
+
+
+#  - name: "designsforchimni00swan_orig_jp2"
+#    processors:
+#
+#      - type: "AutoPageCropper"
+#        left:
+#          x_start: 935
+#          y_start: 1067
+#        right:
+#          x_start: 572
+#          y_start: 1073
+#        image_size:
+#          width: 4136
+#          height: 2403
+#
+#      - type: "ImageRotator"
+#        left:
+#          angle: 90
+#        right:
+#          angle: -90
+#
+#      - type: "ThresholdFilter"
+#        min_thresh: 100
+#        max_thresh: 200
+
+
+  - name: "detailsofgothica01coll_0_orig_jp2"
     processors:
+      - type: "ImageRotator"
+        left:
+          angle: -1.20
+        right:
+          angle: 0
+
+      - type: "AutoPageCropper"
+        left:
+          x_start: 704
+          y_start: 308
+        right:
+          x_start: 600
+          y_start: 363
+        image_size:
+          width: 4274
+          height: 3388
+
+      - type: "ImageRotator"
+        left:
+          angle: 90
+        right:
+          angle: -90
+
+  - name: "detailsofgothica02coll_0_orig_jp2"
+    processors:
+      - type: "ImageRotator"
+        left:
+          angle: -1
+        right:
+          angle: -0.5
 
       - type: "AutoPageCropper"
         left:
           x_start: 171
-          y_start: 127
+          y_start: 391
         right:
-          x_start: 259
-          y_start: 209
+          x_start: 165
+          y_start: 413
         image_size:
-          width: 5170
-          height: 3250
+          width: 4240
+          height: 3344
 
       - type: "ImageRotator"
-        right:
-          angle: 90
         left:
+          angle: 90
+        right:
           angle: -90
+#
+#  - name: "diebibelinbilder00schn_orig_jp2"
+#    processors:
+#
+#      - type: "AutoPageCropper"
+#        left:
+#          x_start: 286
+#          y_start: 0
+#        right:
+#          x_start: 770
+#          y_start: 33
+#        image_size:
+#          width: 4565
+#          height: 3874
+#
+#      - type: "ImageRotator"
+#        left:
+#          angle: 90
+#        right:
+#          angle: -90
+#
+#      - type: "ImageRotator"
+#        left:
+#          angle: -90
+#        right:
+#          angle: -90
+
+#
+#  - name: "diekonstruktione02uhde_orig_jp2"
+#    processors:
+#
+#      - type: "AutoPageCropper"
+#        left:
+#          x_start: 385
+#          y_start: 506
+#        right:
+#          x_start: 1029
+#          y_start: 325
+#        image_size:
+#          width: 4219
+#          height: 2921
+#
+#      - type: "ImageRotator"
+#        left:
+#          angle: 90
+#        right:
+#          angle: -90
+#        expand: True
+#
+#      - type: "ThresholdFilter"
+#        min_thresh: 60
+#        max_thresh: 230
+
+
+#  - name: "elementsofstylei00broo_0_orig_jp2"
+#    processors:
+#
+#      - type: "AutoPageCropper"
+#        left:
+#          x_start: 358
+#          y_start: 803
+#        right:
+#          x_start: 847
+#          y_start: 748
+#        image_size:
+#          width: 4395
+#          height: 2800
+#
+#      - type: "ImageRotator"
+#        left:
+#          angle: 90
+#        right:
+#          angle: -90
+#
+#  - name: "gothicornamentso00pugi_orig_jp2"
+#    processors:
+#
+#      - type: "AutoPageCropper"
+#        left:
+#          x_start: 1254
+#          y_start: 688
+#        right:
+#          x_start: 380
+#          y_start: 814
+#        image_size:
+#          width: 3894
+#          height: 2948
+#
+#      - type: "ImageRotator"
+#        left:
+#          angle: 90
+#        right:
+#          angle: -90
+
+
+#  - name: "gri_33125006524173_jp2"
+#    processors:
+#
+#      - type: "AutoPageCropper"
+#        # Right and left are flipped for gri
+#        left:
+#          x_start: 0
+#          y_start: 187
+#        right:
+#          x_start: 473
+#          y_start: 253
+#        image_size:
+#          width: 5487
+#          height: 6633
+#
+#      - type: "ThresholdFilter"
+#        min_thresh: 100
+#        max_thresh: 200
+#
+#  - name: "gri_33125012247702_jp2"
+#    processors:
+#
+#      - type: "AutoPageCropper"
+#        # Right and left are flipped for gri
+#        left:
+#          x_start: 0
+#          y_start: 96
+#        right:
+#          x_start: 208
+#          y_start: 148
+#        image_size:
+#          width: 1784
+#          height: 2824
+#
+#      - type: "ThresholdFilter"
+#        min_thresh: 100
+#        max_thresh: 200
+#
+#  - name: "handbooktocathed12king_0_orig_jp2"
+#    processors:
+#
+#      - type: "AutoPageCropper"
+#        left:
+#          x_start: 473
+#          y_start: 374
+#        right:
+#          x_start: 677
+#          y_start: 677
+#        image_size:
+#          width: 4681
+#          height: 2992
+#
+#      - type: "ImageRotator"
+#        left:
+#          angle: 90
+#        right:
+#          angle: -90
+#
+#      - type: "ThresholdFilter"
+#        min_thresh: 100
+#        max_thresh: 200
+
+#  - name: "imaginifavolosen00pitt_orig_jp2"
+#    processors:
+#
+#      - type: "AutoPageCropper"
+#        left:
+#          x_start: 858
+#          y_start: 789
+#        right:
+#          x_start: 908
+#          y_start: 842
+#        image_size:
+#          width: 3900
+#          height: 2947
+#
+#      - type: "ImageRotator"
+#        left:
+#          angle: 90
+#        right:
+#          angle: -90
+#
+#
+#  - name: "mittheilungender14kkze_orig_jp2"
+#    processors:
+#
+#      - type: "AutoPageCropper"
+#        left:
+#          x_start: 540
+#          y_start: 0
+#        right:
+#          x_start: 444
+#          y_start: 48
+#        image_size:
+#          width: 3432
+#          height: 2726
+#
+#      - type: "ImageRotator"
+#        left:
+#          angle: 90
+#        right:
+#          angle: -90
+#
+#  - name: "observationsonar00rich_orig_jp2"
+#    processors:
+#
+#      - type: "AutoPageCropper"
+#        left:
+#          x_start: 721
+#          y_start: 468
+#        right:
+#          x_start: 600
+#          y_start: 374
+#        image_size:
+#          width: 4324
+#          height: 3266
+#
+#      - type: "ImageRotator"
+#        left:
+#          angle: 90
+#        right:
+#          angle: -90
+
+#  - name: "ordinidarchitett00vign_orig_jp2"
+#    processors:
+#
+#      - type: "AutoPageCropper"
+#        left:
+#          x_start: 0
+#          y_start: 0
+#        right:
+#          x_start: 0
+#          y_start: 0
+#        image_size:
+#          width: 4364
+#          height: 3616
+#
+#      - type: "ImageRotator"
+#        left:
+#          angle: 90
+#        right:
+#          angle: -90
+#
+#      - type: "ThresholdFilter"
+#        min_thresh: 100
+#        max_thresh: 200
+
+
+#  - name: "ornementdeducerc00andr_orig_jp2"
+#    processors:
+#
+#      - type: "AutoPageCropper"
+#        left:
+#          x_start: 567
+#          y_start: 589
+#        right:
+#          x_start: 886
+#          y_start: 644
+#        image_size:
+#          width: 4213
+#          height: 2954
+#
+#      - type: "ImageRotator"
+#        left:
+#          angle: 90
+#        right:
+#          angle: -90
+#
+#  - name: "progressiveameri00crof_orig_jp2"
+#    processors:
+#
+#      - type: "AutoPageCropper"
+#        left:
+#          x_start: 248
+#          y_start: 209
+#        right:
+#          x_start: 1133
+#          y_start: 209
+#        image_size:
+#          width: 4653
+#          height: 3526
+#
+#      - type: "ImageRotator"
+#        left:
+#          angle: 90
+#        right:
+#          angle: -90
+
+#  - name: "regoladellicinqv00vign_orig_jp2"
+#    processors:
+#
+#      - type: "AutoPageCropper"
+#        left:
+#          x_start: 0
+#          y_start: 0
+#        right:
+#          x_start: 0
+#          y_start: 0
+#        image_size:
+#          width: 4288
+#          height: 2756
+#
+#      - type: "ImageRotator"
+#        left:
+#          angle: 90
+#        right:
+#          angle: -90
+#
+#      - type: "ThresholdFilter"
+#        min_thresh: 100
+#        max_thresh: 200
+
+#  - name: "samuelismarolois00maro_orig_jp2"
+#    processors:
+#
+#      - type: "AutoPageCropper"
+#        left:
+#          x_start: 682
+#          y_start: 561
+#        right:
+#          x_start: 880
+#          y_start: 671
+#        image_size:
+#          width: 4676
+#          height: 3184
+#
+#      - type: "ImageRotator"
+#        left:
+#          angle: 90
+#        right:
+#          angle: -90
+#
+#      - type: "ThresholdFilter"
+#        min_thresh: 80
+#        max_thresh: 230
+
+#  - name: "studybookofmediv03king_0_orig_jp2"
+#    processors:
+#
+#      - type: "ImageRotator"
+#        left:
+#          angle: -3.10
+#        right:
+#          angle: -1.80
+#
+#      - type: "AutoPageCropper"
+#        left:
+#          x_start: 369
+#          y_start: 0
+#        right:
+#          x_start: 435
+#          y_start: 0
+#        image_size:
+#          width: 4818
+#          height: 3454
+#
+#      - type: "ImageRotator"
+#        left:
+#          angle: 90
+#        right:
+#          angle: -90
+#
+#      - type: "ThresholdFilter"
+#        min_thresh: 100
+#        max_thresh: 200

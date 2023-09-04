@@ -1,4 +1,5 @@
 import sys
+import traceback
 from concurrent.futures import ProcessPoolExecutor
 
 import yaml
@@ -6,11 +7,18 @@ import yaml
 from python.src.processors.book_processor import BookProcessor
 
 
-def process_book(book_config):
+def process_book(book_config, config_data):
     """Process a single book."""
     print(f"Processing book: {book_config['name']}")
-    book_processor = BookProcessor(book_config)
-    book_processor.process_book()
+    book_processor = BookProcessor(
+        book_config, config_data.get("input_dir"), config_data.get("output_dir")
+    )
+
+    try:
+        book_processor.process_book()
+    except Exception as exception:
+        print(exception)
+        print(traceback.format_exc())
 
 
 def main():
@@ -25,7 +33,7 @@ def main():
 
     with ProcessPoolExecutor() as executor:
         for book_config in config_data.get("books", []):
-            executor.submit(process_book, book_config)
+            executor.submit(process_book, book_config, config_data)
 
 
 if __name__ == "__main__":

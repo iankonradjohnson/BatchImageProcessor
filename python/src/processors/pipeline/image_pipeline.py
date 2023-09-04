@@ -7,26 +7,28 @@ from python.src.processors.image_processor import ImageProcessor
 
 
 class ImagePipeline:
-    def __init__(self, processors: List[ImageProcessor], save_dir: str = None):
+    def __init__(self, processors: List[ImageProcessor], input_dir, output_dir):
         self.processors = processors
-        self.save_dir = save_dir
+        self.input_dir = input_dir
+        self.output_dir = output_dir
 
-    def process_and_save_image(self, img_path: str, is_left: bool) -> None:
+    def process_and_save_image(self, filename: str, is_left: bool) -> None:
         try:
-            with Image.open(img_path) as img:
+            image_path = os.path.join(self.input_dir, filename)
+            save_path = os.path.join(self.output_dir, filename)
+
+            with Image.open(image_path) as img:
                 for processor in self.processors:
                     img = processor.process(img, is_left)
 
-                if not os.path.exists(self.save_dir):
-                    os.mkdir(self.save_dir)
+                    # If image is none, this is a result of a filter and image should not be saved
+                    if img is None:
+                        return
 
-                img.save(self.get_save_path(img_path))
+                if not os.path.exists(self.output_dir):
+                    os.mkdir(self.output_dir)
+
+                img.save(save_path)
 
         except UnidentifiedImageError as error:
             print(error)
-
-    def get_save_path(self, img_path: str) -> str:
-        if self.save_dir is None:
-            return img_path
-
-        return os.path.join(self.save_dir, os.path.basename(img_path))

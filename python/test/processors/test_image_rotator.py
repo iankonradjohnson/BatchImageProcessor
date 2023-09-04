@@ -16,8 +16,8 @@ def create_initial_image():
 class TestImageRotator(TestCase):
     def setUp(self):
         config = {
-            "left": {"angle": 90, "skew": 0.5},
-            "right": {"angle": -90, "skew": -0.5},
+            "left": {"angle": 90},
+            "right": {"angle": -90},
         }
         self.image_rotator = ImageRotator(config)
 
@@ -25,7 +25,7 @@ class TestImageRotator(TestCase):
         img = create_initial_image()
 
         # Expected: triangle pointing to the left
-        expected_img = img.rotate(90.5, resample=Image.Resampling.BICUBIC, expand=True)
+        expected_img = img.rotate(90, resample=Image.Resampling.BICUBIC, expand=True)
 
         result = self.image_rotator.process(img, True)
 
@@ -36,7 +36,7 @@ class TestImageRotator(TestCase):
         img = create_initial_image()
 
         # Expected: triangle pointing to the right
-        expected_img = img.rotate(-90.5, resample=Image.Resampling.BICUBIC, expand=True)
+        expected_img = img.rotate(-90, resample=Image.Resampling.BICUBIC, expand=True)
 
         result = self.image_rotator.process(img, False)
 

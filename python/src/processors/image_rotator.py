@@ -9,6 +9,5 @@ class ImageRotator(ImageProcessor):
 
     def process(self, img: Image, is_left: bool) -> Image:
         angle = self.left.get("angle", 90) if is_left else self.right.get("angle", -90)
-        skew = self.left.get("skew", 0) if is_left else self.right.get("skew", 0)
 
-        return img.rotate(angle + skew, resample=Image.Resampling.BICUBIC, expand=True)
+        return img.rotate(angle, resample=Image.Resampling.BICUBIC, expand=True)

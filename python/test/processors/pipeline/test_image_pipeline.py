@@ -12,7 +12,8 @@ class TestImagePipeline(unittest.TestCase):
         self.test_image = Image.new("RGB", (10, 10), "white")
         self.test_image.save = MagicMock()
         self.mock_processor.process.return_value = self.test_image
-        self.mock_img_path = "/path/to/mock_img.jpg"
+        self.mock_img_filename = "mock_img.jpg"
+        self.input_dir = "/path/to/input_dir"
         self.save_dir = "/path/to/save_dir"
 
     @patch("PIL.Image.open")
@@ -20,28 +21,36 @@ class TestImagePipeline(unittest.TestCase):
     @patch("os.mkdir")
     def test_process_and_save_image(self, mock_mkdir, mock_exists, mock_open):
         mock_open.return_value.__enter__.return_value = self.test_image
-        pipeline = ImagePipeline([self.mock_processor], self.save_dir)
+        pipeline = ImagePipeline([self.mock_processor], self.input_dir, self.save_dir)
 
-        pipeline.process_and_save_image(self.mock_img_path, True)
+        pipeline.process_and_save_image(self.mock_img_filename, True)
 
-        mock_open.assert_called_once_with(self.mock_img_path)
+        mock_open.assert_called_once_with(f"{self.input_dir}/{self.mock_img_filename}")
         self.mock_processor.process.assert_called_once_with(self.test_image, True)
-        self.test_image.save.assert_called_with("/path/to/save_dir/mock_img.jpg")
+        self.test_image.save.assert_called_with(
+            f"{self.save_dir}/{self.mock_img_filename}"
+        )
         mock_mkdir.assert_called_once_with(self.save_dir)
 
     @patch("PIL.Image.open")
     def test_unidentified_image_error(self, mock_open):
         mock_open.side_effect = UnidentifiedImageError
-        pipeline = ImagePipeline([self.mock_processor], self.save_dir)
+        pipeline = ImagePipeline([self.mock_processor], self.input_dir, self.save_dir)
 
-        pipeline.process_and_save_image(self.mock_img_path, True)
+        pipeline.process_and_save_image(self.mock_img_filename, True)
 
-        self.assertRaises(UnidentifiedImageError)
         self.mock_processor.process.assert_not_called()
 
-    def test_get_save_path_without_save_dir(self):
-        pipeline = ImagePipeline([self.mock_processor], None)
+    @patch("PIL.Image.open")
+    @patch("os.path.exists", return_value=False)
+    @patch("os.mkdir")
+    def test_process_and_save_none_image_does_not_save(
+        self, mock_mkdir, mock_exists, mock_open
+    ):
+        mock_open.return_value.__enter__.return_value = self.test_image
+        self.mock_processor.process.return_value = None
+        pipeline = ImagePipeline([self.mock_processor], self.input_dir, self.save_dir)
 
-        result_path = pipeline.get_save_path(self.mock_img_path)
+        pipeline.process_and_save_image(self.mock_img_filename, True)
 
-        self.assertEqual(result_path, self.mock_img_path)
+        self.test_image.save.assert_not_called()
