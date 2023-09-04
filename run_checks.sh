@@ -16,7 +16,7 @@ python -m unittest discover || report_failure
 
 # Check for at least 95% test coverage
 coverage run -m unittest discover
-coverage report -m --fail-under=95 || report_failure
+coverage report -i -m --fail-under=95 || report_failure
 coverage html
 
 # Format code with Black
