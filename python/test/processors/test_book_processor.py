@@ -1,7 +1,7 @@
 from concurrent.futures import ProcessPoolExecutor
 from unittest import TestCase, mock
 
-from python.src.processors.book_processor import BookProcessor
+from python.src.processors.batch.dual_page_processor import DualPageProcessor
 
 
 class TestBookProcessor(TestCase):
@@ -10,7 +10,7 @@ class TestBookProcessor(TestCase):
             "name": "/path/to/images",
             "processors": [{"type": "ImageRotator"}],
         }
-        self.processor = BookProcessor(book_config, "", "")
+        self.processor = DualPageProcessor(book_config, "", "")
 
     @mock.patch("os.listdir")
     @mock.patch.object(ProcessPoolExecutor, "submit")
@@ -18,7 +18,7 @@ class TestBookProcessor(TestCase):
         mock_listdir.return_value = ["image1.jpg", "image2.jpg"]
 
         # When
-        self.processor.process_book()
+        self.processor.batch_process()
 
         # Then
         expected_calls = [

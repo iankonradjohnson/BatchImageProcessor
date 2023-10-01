@@ -1,0 +1,21 @@
+directories:
+  - input_dir: "/Users/iankonradjohnson/base/abacus/data/archive-pdfs/raw/samuelismarolois00maro_orig_jp2"
+    output_dir: "/Users/iankonradjohnson/base/abacus/data/archive-pdfs/processed/samuelismarolois00maro_orig_jp2"
+    type: "DualPage"
+    processors:
+      - type: "AutoPageCropper"
+        left:
+          x_start: 770
+          y_start: 622
+        right:
+          x_start: 952
+          y_start: 726
+        image_size:
+          width: 4510
+          height: 3000
+
+      - type: "ImageRotator"
+        left:
+          angle: 90
+        right:
+          angle: -90

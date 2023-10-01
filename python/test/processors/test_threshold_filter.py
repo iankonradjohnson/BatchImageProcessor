@@ -1,9 +1,8 @@
 import unittest
 from unittest.mock import patch, MagicMock
-from python.src.processors.image_processor import ImageProcessor
 from PIL import Image
 
-from python.src.processors.threshold_filter import ThresholdFilter
+from python.src.processors.image.threshold_filter import ThresholdFilter
 
 
 class TestThresholdFilter(unittest.TestCase):

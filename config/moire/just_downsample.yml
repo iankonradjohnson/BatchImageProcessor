@@ -1,0 +1,7 @@
+directories:
+  - input_dir: "/Users/iankonradjohnson/base/abacus/BatchImageProcessor/test/input"
+    output_dir: "/Users/iankonradjohnson/base/abacus/BatchImageProcessor/test/out_normal"
+    type: "SinglePage"
+    processors:
+      - type: "Resize"
+        resize_factor: 0.25
