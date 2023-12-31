@@ -1,4 +1,6 @@
+from python.src.processors.image.color_inverter import ColorInverter
 from python.src.processors.image.dual_page_cropper import DualPageCropper
+from python.src.processors.image.gaussian_blur import GaussianBlur
 from python.src.processors.image.image_augmentor import ImageAugmentor
 from python.src.processors.image.image_processor import ImageProcessor
 from python.src.processors.image.image_rotator import ImageRotator
@@ -33,5 +35,11 @@ class ImageProcessorFactory:
 
         if processor_type == "Threshold":
             return ThresholdProcessor(config)
+
+        if processor_type == "GaussianBlur":
+            return GaussianBlur(config)
+
+        if processor_type == "ColorInverter":
+            return ColorInverter(config)
 
         raise ValueError("Processor invalid")

@@ -1,0 +1,31 @@
+directories:
+  - input_dir: "/Users/iankonradjohnson/base/abacus/data/archive-pdfs/moire_candidates"
+    output_dir: "/Users/iankonradjohnson/base/abacus/data/archive-pdfs/moire/augmented"
+    type: "SinglePage"
+    copies: 3
+    processors:
+      - type: "Resize"
+        resize_range: [ 1.0, 2.0 ]
+      - type: "ImageAugmentor"
+        horizontal_flip:
+          p: 0.5
+        brightness_contrast:
+          brightness_limit: 0.1
+          contrast_limit: 0.1
+          p: 0.5
+        shift_scale_rotate:
+          shift_limit: 0.05
+          scale_limit: 0.05
+          rotate_limit: 1
+          p: 0.5
+        elastic_transform:
+          alpha: 1
+          sigma: 10
+          alpha_affine: 10
+          p: 0.25
+#        grid_distortion:
+#          p: 0.5
+        optical_distortion:
+          distort_limit: 0.05
+          shift_limit: 0.1
+          p: 0.5

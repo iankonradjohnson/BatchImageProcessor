@@ -1,0 +1,53 @@
+directories:
+
+  - input_dir: "/Users/iankonradjohnson/base/abacus/data/archive-images/raw"
+    output_dir: "/Users/iankonradjohnson/base/abacus/data/archive-images/moire/erased_75_size_15-20_freq"
+    type: "SinglePage"
+    processors:
+      - type: "Resize"
+        resize_range: [ .75, .75 ]
+      - type: "Moire"
+        frequency_range: [ 0.18, 0.2 ]
+        opacity: .75
+        mode: "Erase"
+
+  - input_dir: "/Users/iankonradjohnson/base/abacus/data/archive-images/raw"
+    output_dir: "/Users/iankonradjohnson/base/abacus/data/archive-images/moire/erased_75_size_20_freq"
+    type: "SinglePage"
+    processors:
+      - type: "Resize"
+        resize_range: [.75, .75]
+      - type: "Moire"
+        frequency_range: [ 0.2, 0.2 ]
+        opacity: .75
+        mode: "Erase"
+
+  - input_dir: "/Users/iankonradjohnson/base/abacus/data/archive-images/raw"
+    output_dir: "/Users/iankonradjohnson/base/abacus/data/archive-images/moire/normal_75_size_15-20_freq"
+    type: "SinglePage"
+    processors:
+      - type: "Resize"
+        resize_range: [ .75, .75 ]
+      - type: "Moire"
+        frequency_range: [ 0.18, 0.2 ]
+        opacity: .75
+        mode: "Normal"
+
+  - input_dir: "/Users/iankonradjohnson/base/abacus/data/archive-images/raw"
+    output_dir: "/Users/iankonradjohnson/base/abacus/data/archive-images/moire/normal_75_size_20_freq"
+    type: "SinglePage"
+    processors:
+      - type: "Resize"
+        resize_range: [.75, .75]
+      - type: "Moire"
+        frequency_range: [ 0.2, 0.2 ]
+        opacity: .75
+        mode: "Normal"
+
+  # Resize to 75 for ground truth
+  - input_dir: "/Users/iankonradjohnson/base/abacus/data/archive-images/raw"
+    output_dir: "/Users/iankonradjohnson/base/abacus/data/archive-images/moire/75_resize"
+    type: "SinglePage"
+    processors:
+      - type: "Resize"
+        resize_range: [ .75, .75 ]

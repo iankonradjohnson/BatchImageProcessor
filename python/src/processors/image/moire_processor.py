@@ -9,6 +9,8 @@ from blend_modes import overlay
 
 from python.src.processors.image.image_processor import ImageProcessor
 
+ERASE_MODE = "Erase"
+NORMAL_MODE = "Normal"
 
 class MoireProcessor(ImageProcessor):
     def __init__(self, config):
@@ -19,21 +21,27 @@ class MoireProcessor(ImageProcessor):
         img = img.convert("RGBA")
         screen = self.create_screen(img.width, img.height)
 
-        return self.blend_moire(img, screen)
+        mode = self.config.get("mode", ERASE_MODE)
+        if mode == ERASE_MODE:
+            return self.blend_moire_erase(img, screen)
+        elif mode == NORMAL_MODE:
+            return self.blend_moire_normal(img, screen)
 
-    def blend_moire(self, original_image, moire_overlay):
-
-        # original_image_gray = ImageOps.grayscale(original_image)
-        #
-        # threshold_value = self.config.get("threshold", 128)
-        # original_image_thresholded = original_image_gray.point(lambda p: 255 if p > threshold_value else 0)
-        #
-        # mask = ImageOps.invert(original_image_thresholded)
-        #
-        # erased = self.erase_pixels_in_mask(moire_overlay, mask)
-        #
-        # return self.blend_overlay(original_image, erased, self.config.get("opacity", 0.5))
+    def blend_moire_normal(self, original_image, moire_overlay):
         return self.blend_overlay(original_image, moire_overlay, self.config.get("opacity", 0.5))
+
+    def blend_moire_erase(self, original_image, moire_overlay):
+
+        original_image_gray = ImageOps.grayscale(original_image)
+
+        threshold_value = self.config.get("threshold", 128)
+        original_image_thresholded = original_image_gray.point(lambda p: 255 if p > threshold_value else 0)
+
+        mask = ImageOps.invert(original_image_thresholded)
+
+        erased = self.erase_pixels_in_mask(moire_overlay, mask)
+
+        return self.blend_overlay(original_image, erased, self.config.get("opacity", 0.5))
 
     def blend_overlay(self, original_image, overlay_image, opacity):
         original_image_np = np.array(original_image).astype(float)
@@ -43,18 +51,17 @@ class MoireProcessor(ImageProcessor):
         return Image.fromarray(np.uint8(blended_np))
 
     def create_screen(self, width, height) -> Image:
-        canvas = np.zeros((height, width, 4), dtype=np.uint8)
-        canvas[:, :, :] = (255, 255, 255, 255)
+        canvas = np.ones((height, width)) * 255
 
         frequency = random.uniform(self.frequency_range[0], self.frequency_range[1])
 
         num_lines = int(height * frequency)
-        line_spacing = height // num_lines
-        line_width = line_spacing // 2
+        line_spacing = height / num_lines
+        line_width = int(line_spacing / 2)
 
         for i in range(0, num_lines):
-            y = i * line_spacing
-            canvas[int(y - line_width):int(y), :] = (0, 0, 0, 255)
+            y = int(i * line_spacing)
+            canvas[y - line_width:y, :] = 0
 
         screen = Image.fromarray(canvas).convert("RGBA")
         screen = screen.filter(ImageFilter.GaussianBlur(radius=line_width * .5))
@@ -67,7 +74,7 @@ class MoireProcessor(ImageProcessor):
                 mask_pixel = mask.getpixel((x, y))
                 img_pixel = img.getpixel((x, y))
                 if mask_pixel == 0:
-                    new_img.putpixel((x, y), (255, 255, 255, 255))
+                    new_img.putpixel((x, y), (255, 255, 255, 0 ))
                 else:
                     new_img.putpixel((x, y), img_pixel)
         return new_img

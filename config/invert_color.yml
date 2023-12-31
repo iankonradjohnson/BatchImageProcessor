@@ -1,0 +1,6 @@
+directories:
+  - input_dir: "/Users/iankonradjohnson/Documents/abbyy-projects/Canina/1_Egypt/Part2/Part2/greek"
+    output_dir: "/Users/iankonradjohnson/Documents/abbyy-projects/Canina/1_Egypt/Part2/Part2/greek_inverted"
+    type: "SinglePage"
+    processors:
+      - type: "ColorInverter"

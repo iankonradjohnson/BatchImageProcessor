@@ -11,13 +11,8 @@ class SinglePageProcessor(BatchProcessor):
     def __init__(self, config):
         super().__init__(config)
 
-    def batch_process(self):
+    def batch_process(self, filename_li):
         """Process a single book based on the provided configuration."""
-
-        filename_li = os.listdir(self.input_dir)
-        filename_li = [
-            f for f in filename_li if not os.path.basename(f).startswith(".")
-        ]
 
         pbar = tqdm(total=len(filename_li * self.copies), unit='image', desc='Extract')
         pool = Pool(cpu_count())

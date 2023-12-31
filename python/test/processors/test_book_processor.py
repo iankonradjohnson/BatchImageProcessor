@@ -15,10 +15,8 @@ class TestBookProcessor(TestCase):
     @mock.patch("os.listdir")
     @mock.patch.object(ProcessPoolExecutor, "submit")
     def test_process(self, mock_submit, mock_listdir):
-        mock_listdir.return_value = ["image1.jpg", "image2.jpg"]
-
         # When
-        self.processor.batch_process()
+        self.processor.batch_process(["image1.jpg", "image2.jpg"])
 
         # Then
         expected_calls = [

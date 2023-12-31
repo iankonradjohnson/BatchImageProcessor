@@ -14,13 +14,8 @@ class DualPageProcessor(BatchProcessor):
     def __init__(self, config):
         super().__init__(config)
 
-    def batch_process(self):
+    def batch_process(self, filename_li):
         """Process a single book based on the provided configuration."""
-
-        filename_li = sorted(os.listdir(self.input_dir))
-        filename_li = [
-            f for f in filename_li if not os.path.basename(f).startswith(".")
-        ]
 
         is_left = True
         with tqdm(total=len(filename_li * self.copies)) as pbar:

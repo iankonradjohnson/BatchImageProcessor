@@ -1,3 +1,4 @@
+import os
 import sys
 import traceback
 from concurrent.futures import ProcessPoolExecutor, as_completed
@@ -13,9 +14,12 @@ from python.src.processors.batch.dual_page_processor import DualPageProcessor
 def worker(dir_config):
     """Process a single book."""
     try:
-        print(f"Processing directory: {dir_config['input_dir']}")
+        input_dir = dir_config['input_dir']
+        print(f"Processing directory: {input_dir}")
         batch_processor = BatchProcessorFactory.create_batch_processor(dir_config)
-        batch_processor.batch_process()
+
+        filename_li = [f for f in get_all_files(input_dir) if not os.path.basename(f).startswith(".")]
+        batch_processor.batch_process(filename_li)
     except Exception as exception:
         print(exception)
         print(traceback.format_exc())
@@ -41,6 +45,14 @@ def main():
             }
             for _ in as_completed(futures):
                 pbar.update(1)
+
+
+def get_all_files(directory):
+    file_list = []
+    for folder_name, sub_folders, filenames in os.walk(directory):
+        for filename in filenames:
+            file_list.append(os.path.join(folder_name, filename))
+    return file_list
 
 
 if __name__ == "__main__":
