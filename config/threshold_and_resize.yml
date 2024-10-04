@@ -1,0 +1,10 @@
+directories:
+  - input_dir: "/Users/iankonradjohnson/base/abacus/BookProjects/TheModelArchitect/Volume1/images/deskewed/binary_out"
+    output_dir: "/Users/iankonradjohnson/base/abacus/BookProjects/TheModelArchitect/Volume1/images/deskewed/binary_out_downsampled"
+    type: "SinglePage"
+    processors:
+      - type: "Threshold"
+        threshold_value: 190
+      - type: "Resize"
+        resize_range: [.5, .5]
+

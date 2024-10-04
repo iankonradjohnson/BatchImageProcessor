@@ -1,0 +1,9 @@
+directories:
+  - input_dir: "/Users/iankonradjohnson/base/abacus/BookProjects/TheModelArchitect/Volume1/images/deskewed/greyscale_out"
+    output_dir: "/Users/iankonradjohnson/base/abacus/BookProjects/TheModelArchitect/Volume1/images/deskewed/greyscalels_out_downsampled"
+    type: "SinglePage"
+    processors:
+      - type: "Greyscale"
+      - type: "Resize"
+        resize_range: [.5, .5]
+

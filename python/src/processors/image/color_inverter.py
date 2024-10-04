@@ -1,10 +1,6 @@
-from PIL.Image import Image
-
 from python.src.processors.image.image_processor import ImageProcessor
-
-from PIL import ImageOps
-
 from PIL import Image, ImageOps
+
 
 class ColorInverter(ImageProcessor):
     def __init__(self, config):

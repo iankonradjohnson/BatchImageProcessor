@@ -1,0 +1,14 @@
+directories:
+  - input_dir: "/Users/iankonradjohnson/base/abacus/BookProjects/The_terra-cotta_architecture_of_North_Italy/upscaled/color-images"
+    output_dir: "/Users/iankonradjohnson/base/abacus/BookProjects/The_terra-cotta_architecture_of_North_Italy/upscaled-downsampled/color-images"
+    type: "SinglePage"
+    processors:
+      - type: "Resize"
+        resize_range: [0.4, 0.4]
+      - type: "RedBlueChannelSwap"
+      - type: "ColorBalance"
+        blue: 1.05
+      - type: "VibranceSaturation"
+        vibrance: 1.2
+        saturation: 1.2
+

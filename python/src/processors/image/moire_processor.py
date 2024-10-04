@@ -34,7 +34,7 @@ class MoireProcessor(ImageProcessor):
 
         original_image_gray = ImageOps.grayscale(original_image)
 
-        threshold_value = self.config.get("threshold", 128)
+        threshold_value = self.config.get("threshold.yml", 128)
         original_image_thresholded = original_image_gray.point(lambda p: 255 if p > threshold_value else 0)
 
         mask = ImageOps.invert(original_image_thresholded)

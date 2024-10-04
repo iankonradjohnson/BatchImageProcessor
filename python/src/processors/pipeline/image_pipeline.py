@@ -5,6 +5,7 @@ from PIL import Image, UnidentifiedImageError
 
 from python.src.processors.image.image_processor import ImageProcessor
 
+Image.MAX_IMAGE_PIXELS = None
 
 class ImagePipeline:
     def __init__(self, processors: List[ImageProcessor], input_dir, output_dir, deleted_dir):
@@ -16,7 +17,7 @@ class ImagePipeline:
     def process_and_save_image(self, filepath: str, is_left: bool = None, copy_num: int = 1) -> None:
         try:
             split = os.path.basename(filepath).split('.')
-            basename, ext = ''.join(split[:-1]), split[-1]
+            basename, ext = '.'.join(split[:-1]), split[-1]
             image_path = os.path.join(self.input_dir, filepath)
             save_path = os.path.join(
                 self.output_dir,

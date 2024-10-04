@@ -1,13 +1,18 @@
+from python.src.processors.image.color_balance import ColorBalance
 from python.src.processors.image.color_inverter import ColorInverter
 from python.src.processors.image.dual_page_cropper import DualPageCropper
 from python.src.processors.image.gaussian_blur import GaussianBlur
+from python.src.processors.image.greyscale import Greyscale
 from python.src.processors.image.image_augmentor import ImageAugmentor
+from python.src.processors.image.image_mode_converter import ImageModeConverter
 from python.src.processors.image.image_processor import ImageProcessor
 from python.src.processors.image.image_rotator import ImageRotator
 from python.src.processors.image.moire_processor import MoireProcessor
+from python.src.processors.image.red_blue_channel_swap import RedBlueChannelSwap
 from python.src.processors.image.resize_processor import ResizeProcessor
 from python.src.processors.image.threshold_filter import ThresholdFilter
 from python.src.processors.image.threshold_processor import ThresholdProcessor
+from python.src.processors.image.vibrance_saturation import VibranceSaturation
 
 
 class ImageProcessorFactory:
@@ -41,5 +46,20 @@ class ImageProcessorFactory:
 
         if processor_type == "ColorInverter":
             return ColorInverter(config)
+
+        if processor_type == "Greyscale":
+            return Greyscale(config)
+
+        if processor_type == "RedBlueChannelSwap":
+            return RedBlueChannelSwap(config)
+
+        if processor_type == "ImageModeConverter":
+            return ImageModeConverter(config)
+
+        if processor_type == "ColorBalance":
+            return ColorBalance(config)
+
+        if processor_type == "VibranceSaturation":
+            return VibranceSaturation(config)
 
         raise ValueError("Processor invalid")
