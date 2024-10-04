@@ -1,0 +1,9 @@
+directories:
+  - input_dir: "/Users/iankonradjohnson/base/abacus/data/archive-pdfs/sub"
+    output_dir: "/Users/iankonradjohnson/base/abacus/data/archive-pdfs/filtered"
+    deleted_dir: "/Users/iankonradjohnson/base/abacus/data/archive-pdfs/deleted"
+    type: "SinglePage"
+    processors:
+      - type: "ThresholdFilter"
+        min_thresh: 70
+        max_thresh: 245

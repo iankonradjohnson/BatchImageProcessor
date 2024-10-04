@@ -1,0 +1,9 @@
+directories:
+  - input_dir: "/Users/iankonradjohnson/base/abacus/BookProjects/The_terra-cotta_architecture_of_North_Italy/upscaled/black-and-white"
+    output_dir: "/Users/iankonradjohnson/base/abacus/BookProjects/The_terra-cotta_architecture_of_North_Italy/upscaled-downsampled/black-and-white"
+    type: "SinglePage"
+    processors:
+      - type: "Threshold"
+        threshold_value: 175
+      - type: "ImageModeConverter"
+        mode: "1"

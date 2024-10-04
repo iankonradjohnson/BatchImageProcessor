@@ -1,0 +1,19 @@
+directories:
+  - input_dir: "/Users/iankonradjohnson/base/abacus/data/archive-pdfs/raw/samuelismarolois00maro_orig_jp2"
+    output_dir: "/Users/iankonradjohnson/base/abacus/data/archive-pdfs/processed/samuelismarolois00maro_orig_jp2"
+    type: "DualPage"
+    processors:
+      - type: "AutoPageCropper"
+        right:
+          x_start: 144
+          y_start: 132
+        left:
+          x_start: 0
+          y_start: 80
+        image_size:
+          width: 1959
+          height: 2768
+
+      - type: "ThresholdFilter"
+        min_thresh: 0
+        max_thresh: 200

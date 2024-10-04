@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import MagicMock, patch
-from python.src.processors.image_processor import ImageProcessor
+from python.src.processors.image.image_processor import ImageProcessor
 from PIL import Image, UnidentifiedImageError
 
 from python.src.processors.pipeline.image_pipeline import ImagePipeline
