@@ -32,12 +32,12 @@ class ImagePipeline:
 
                     # If image is none, this is a result of a filter and image should not be saved
                     if img is None:
-                        if not os.path.exists(self.deleted_dir):
-                            os.mkdir(self.deleted_dir)
+                        if self.deleted_dir:  # Check if deleted_dir is not None
+                            if not os.path.exists(self.deleted_dir):
+                                os.mkdir(self.deleted_dir)
 
-                        filename = os.path.basename(filepath)
-
-                        original_img.save(os.path.join(self.deleted_dir, filename))
+                            filename = os.path.basename(filepath)
+                            original_img.save(os.path.join(self.deleted_dir, filename))
                         return
 
                 if not os.path.exists(self.output_dir):

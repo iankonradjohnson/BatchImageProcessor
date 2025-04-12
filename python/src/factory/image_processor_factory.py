@@ -6,6 +6,7 @@ from python.src.processors.image.dpi_metadata import DpiMetadata
 from python.src.processors.image.dual_page_cropper import DualPageCropper
 from python.src.processors.image.gaussian_blur import GaussianBlur
 from python.src.processors.image.greyscale import Greyscale
+from python.src.processors.image.greyscale_binary_separator import GreyscaleBinarySeparator
 from python.src.processors.image.image_augmentor import ImageAugmentor
 from python.src.processors.image.image_mode_converter import ImageModeConverter
 from python.src.processors.image.image_processor import ImageProcessor
@@ -77,6 +78,9 @@ class ImageProcessorFactory:
 
         if processor_type == "LevelsAdjustment":
             return LevelsAdjustment(config)
+            
+        if processor_type == "GreyscaleBinarySeparator":
+            return GreyscaleBinarySeparator(config)
 
 
         raise ValueError("Processor invalid")

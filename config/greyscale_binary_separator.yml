@@ -1,0 +1,64 @@
+directories:
+  - input_dir: "/Users/iankonradjohnson/Downloads/test/in"
+    output_dir: "/Users/iankonradjohnson/Downloads/test/out"
+    type: "SinglePage"
+    processors:
+      - type: "GreyscaleBinarySeparator"
+        # Detection configuration
+        detection:
+          # Strategy weights (how much each strategy contributes to final detection)
+          strategy_weights:
+            histogram: 0.4
+            texture: 0.4
+            edge: 0.2
+
+          # Region extraction settings
+          region_extraction:
+            threshold: 0.5            # Probability threshold for region detection
+            min_region_size: 5000     # Minimum region size in pixels
+            expand_pixels: 5          # Pixels to expand regions by
+            fill_holes: true          # Whether to fill holes in regions
+
+          # Detection strategy configurations
+          detection:
+            histogram:
+              window_size: 32         # Size of sliding window
+              stride: 16              # Stride for window sliding
+              bimodality_threshold: 0.5  # Threshold for bimodality detection
+              scales: [ 1.0, 0.5, 0.25 ]  # Scales for multi-scale analysis
+
+            texture:
+              window_size: 32         # Size of sliding window
+              stride: 16              # Stride for window sliding
+              lbp_radius: 3           # Radius for local binary pattern
+              lbp_points: 24          # Number of points for LBP
+              texture_threshold: 0.3  # Threshold for texture detection
+
+            edge:
+              edge_threshold: 0.1     # Threshold for edge detection
+              min_edge_density: 0.05  # Minimum edge density for grayscale regions
+              max_edge_density: 0.3   # Maximum edge density for grayscale regions
+              smooth_radius: 5        # Radius for smoothing
+              scales: [ 1.0, 0.5 ]      # Scales for multi-scale analysis
+
+        # Processing configuration
+        processing:
+          # Binary region processing settings
+          binary:
+            threshold: 128            # Threshold value (0-255, null for auto)
+            invert: false             # Whether to invert the result
+
+          # Grayscale region processing settings
+          grayscale:
+            brightness: 0.0           # Brightness adjustment (-1.0 to 1.0)
+            contrast: 1.0             # Contrast adjustment (0.0 to 2.0)
+            dpi: 300                  # Target DPI for dithering
+            dither_type: floyd-steinberg  # Dithering algorithm (floyd-steinberg, ordered, none)
+            threshold: null           # Threshold value (0-255, null for auto)
+
+        # Visualization settings
+        save_visualization: true      # Whether to save visualization images
+        visualization_path: "/Users/iankonradjohnson/base/abacus/BatchImageProcessor/output"  # Directory to save visualizations
+
+
+
