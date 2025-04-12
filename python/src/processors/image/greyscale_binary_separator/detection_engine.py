@@ -105,17 +105,17 @@ class RegionDetectionEngine:
                 unique_values = len(np.unique(window))
                 std_dev = np.std(window)
                 
-                # Simple decision rules for grayscale detection
-                if std_dev > 25 and unique_values > 30:
+                # Simple decision rules for grayscale detection with REDUCED SENSITIVITY
+                if std_dev > 35 and unique_values > 40:
                     # Definitely grayscale - high variance and many unique values
                     probability = very_high_prob
-                elif std_dev > 15 and unique_values > 20:
+                elif std_dev > 25 and unique_values > 30:
                     # Likely grayscale
                     probability = high_prob
-                elif std_dev > 10 and unique_values > 10:
+                elif std_dev > 20 and unique_values > 20:
                     # Possibly grayscale
                     probability = medium_prob
-                elif std_dev > 5 and unique_values > 5:
+                elif std_dev > 15 and unique_values > 15:
                     # Slight chance of grayscale
                     probability = low_prob
                 else:
@@ -133,7 +133,8 @@ class RegionDetectionEngine:
         print(f"Global image metrics - StdDev: {global_std:.2f}, Unique Values: {len(np.unique(gray_img))} ({global_unique:.2%})")
         
         # If the whole image looks like a photograph, force most areas to be grayscale
-        if global_std > 40 and global_unique > 0.3:
+        # Using much higher thresholds for even less sensitivity (only clear photos)
+        if global_std > 80 and global_unique > 0.6:
             print("IMAGE APPEARS TO BE MOSTLY PHOTOGRAPHIC - Forcing grayscale detection")
             # Create a base probability for the entire image
             probability_map = np.clip(probability_map, 0.5, 1.0)

@@ -6,11 +6,11 @@ directories:
       - type: "GreyscaleBinarySeparator"
         # Detection configuration
         detection:
-          # Region extraction settings - extremely aggressive to find all grayscale content
+          # Region extraction settings - much less sensitive to grayscale content
           region_extraction:
-            threshold: 0.1             # Threshold for probability map
-            min_region_size: 100       # Minimum region size in pixels
-            expand_pixels: 15          # Pixels to expand regions by
+            threshold: 0.5             # Much higher threshold for minimal sensitivity
+            min_region_size: 5000      # Much larger minimum size to only detect major regions
+            expand_pixels: 2           # Minimal expansion to avoid including binary content
             fill_holes: true           # Fill holes in regions
 
         # Processing configuration
