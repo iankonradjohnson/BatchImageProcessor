@@ -87,8 +87,14 @@ class TextureAnalysisStrategy(BaseDetectionStrategy):
                     # Calculate texture measure for this window
                     texture_measure = self._calculate_texture_measure(window_lbp, window_gray)
                     
-                    # Convert to grayscale probability
-                    grayscale_prob = min(1.0, texture_measure / self.texture_threshold)
+                    # DEBUG
+                    if i == 0 and j == 0:
+                        print(f"Window 0,0 - Texture measure: {texture_measure}")
+                    
+                    # Convert to grayscale probability - use a more aggressive formula
+                    # Original: grayscale_prob = min(1.0, texture_measure / self.texture_threshold)
+                    # New: Scale it more aggressively and set a minimum
+                    grayscale_prob = max(0.3, min(1.0, texture_measure / (self.texture_threshold * 0.5)))
                     
                     # Update result map
                     y_start = i * stride
@@ -155,7 +161,13 @@ class TextureAnalysisStrategy(BaseDetectionStrategy):
             
         # Calculate variance of grayscale intensities (higher variance = more likely grayscale)
         variance = np.var(gray_window)
-        normalized_variance = min(1.0, variance / 2500.0)  # Normalize to [0, 1] range
+        
+        # DEBUG
+        print(f"Sample window variance: {variance}")
+        
+        # Use a lower normalization value to be more sensitive to grayscale
+        # Original: normalized_variance = min(1.0, variance / 2500.0)
+        normalized_variance = min(1.0, variance / 500.0)  # More sensitive normalization
         
         # Combine entropy and variance as texture measure
         texture_measure = 0.5 * entropy / np.log2(max_lbp_val) + 0.5 * normalized_variance

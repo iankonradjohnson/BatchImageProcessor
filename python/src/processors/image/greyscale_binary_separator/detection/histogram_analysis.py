@@ -113,8 +113,17 @@ class HistogramAnalysisStrategy(BaseDetectionStrategy):
                     # Calculate bimodality value for this window
                     bimodality = self._calculate_bimodality(window)
                     
+                    # DEBUG
+                    if i == 0 and j == 0:
+                        pixel_values, counts = np.unique(window, return_counts=True)
+                        print(f"Window 0,0 - Unique values: {len(pixel_values)}, Bimodality: {bimodality}")
+                        print(f"Sample values: {pixel_values[:10]}")
+                    
                     # Convert to grayscale probability (higher bimodality = lower grayscale probability)
-                    grayscale_prob = 1.0 - min(1.0, bimodality / self.bimodality_threshold)
+                    # Increase the probability by applying a more aggressive formula
+                    # The original formula: grayscale_prob = 1.0 - min(1.0, bimodality / self.bimodality_threshold)
+                    # was 0 when bimodality >= threshold. We want to be more lenient.
+                    grayscale_prob = max(0.2, 1.0 - min(0.8, bimodality / self.bimodality_threshold))
                     
                     # Update result map
                     y_start = i * stride

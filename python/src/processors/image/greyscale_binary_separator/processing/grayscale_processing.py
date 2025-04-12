@@ -27,6 +27,7 @@ class GrayscaleProcessingStrategy(BaseProcessingStrategy):
                 - contrast: Contrast adjustment (0.0 to 2.0, default: 1.0)
                 - dpi: Target DPI for dithering (default: 300)
                 - dither_type: Dithering algorithm (default: 'floyd-steinberg')
+                - preserve_grayscale: Whether to preserve grayscale values (default: False)
                 - threshold: Threshold value (default: auto)
         """
         super().__init__(config)
@@ -34,6 +35,7 @@ class GrayscaleProcessingStrategy(BaseProcessingStrategy):
         self.contrast = self.config.get('contrast', 1.0)
         self.dpi = self.config.get('dpi', 300)
         self.dither_type = self.config.get('dither_type', 'floyd-steinberg')
+        self.preserve_grayscale = self.config.get('preserve_grayscale', False)
         self.threshold_value = self.config.get('threshold', None)
         
     def process(self, image: np.ndarray, region_mask: np.ndarray) -> np.ndarray:
@@ -58,33 +60,75 @@ class GrayscaleProcessingStrategy(BaseProcessingStrategy):
         
         # Skip processing if no regions to process
         if not np.any(region_mask):
+            print("No grayscale regions to process")
             return result
             
+        print(f"Processing grayscale region with {np.sum(region_mask)} pixels")
+        
+        # Make a copy of the mask to avoid modifying the original
+        processing_mask = region_mask.copy()
+        
+        # Optional: Slightly erode the mask to prevent processing right at the boundary
+        # This can help with artifacts at region boundaries
+        from skimage.morphology import binary_erosion, disk
+        # But only if the region is large enough to handle erosion
+        if np.sum(processing_mask) > 1000:
+            processing_mask = binary_erosion(processing_mask, disk(1))
+        
         # Extract region to process
-        region = gray_img[region_mask].astype(np.float32) / 255.0
+        region = gray_img[processing_mask].astype(np.float32) / 255.0
         
         # Apply brightness and contrast adjustments
         adjusted_region = self._adjust_brightness_contrast(region)
         
-        # Determine threshold value
-        if self.threshold_value is None:
-            try:
-                # Auto threshold using Otsu's method
-                threshold = threshold_otsu(adjusted_region)
-            except ValueError:
-                # Fallback if Otsu's method fails
-                threshold = 0.5
-        else:
-            threshold = self.threshold_value / 255.0  # Convert 0-255 to 0-1 range
+        if self.preserve_grayscale:
+            # Preserve grayscale values without thresholding
+            print("Preserving grayscale values for region")
+            processed_region = adjusted_region
             
-        # Apply dithering
-        dithered_region = self._apply_dithering(adjusted_region, threshold)
+            # Optional: Apply edge enhancement to make details more visible
+            # This can help with grayscale images that have low contrast
+            from scipy.ndimage import gaussian_filter
+            
+            # Only apply edge enhancement if region is large enough
+            if len(region) > 100:
+                try:
+                    # Create sharpened version using unsharp masking
+                    blurred = gaussian_filter(adjusted_region, sigma=1.0)
+                    edge_enhanced = adjusted_region + 0.5 * (adjusted_region - blurred)
+                    
+                    # Blend with original (70% enhanced, 30% original)
+                    processed_region = 0.7 * np.clip(edge_enhanced, 0, 1) + 0.3 * adjusted_region
+                    processed_region = np.clip(processed_region, 0, 1)
+                    print("Applied edge enhancement to grayscale region")
+                except Exception as e:
+                    print(f"Edge enhancement failed: {e}, using adjusted region")
+                    # Fall back to adjusted region if enhancement fails
+                    processed_region = adjusted_region
+            else:
+                print("Region too small for edge enhancement")
+                
+        else:
+            # Apply thresholding and dithering
+            # Determine threshold value
+            if self.threshold_value is None:
+                try:
+                    # Auto threshold using Otsu's method
+                    threshold = threshold_otsu(adjusted_region)
+                except ValueError:
+                    # Fallback if Otsu's method fails
+                    threshold = 0.5
+            else:
+                threshold = self.threshold_value / 255.0  # Convert 0-255 to 0-1 range
+                
+            # Apply dithering
+            processed_region = self._apply_dithering(adjusted_region, threshold)
         
         # Convert to output format
-        binary_result = dithered_region.astype(np.uint8) * 255
+        grayscale_result = (processed_region * 255).astype(np.uint8)
         
         # Place processed region back into result
-        result[region_mask] = binary_result
+        result[processing_mask] = grayscale_result
         
         return result
     
@@ -148,6 +192,15 @@ class GrayscaleProcessingStrategy(BaseProcessingStrategy):
         """
         # Create a copy of the image to work with
         dithered = image.copy()
+        
+        # BUGFIX: Check if image is a 1D array and reshape if needed
+        if len(dithered.shape) == 1:
+            # 1D array handling
+            print(f"WARNING: Received 1D array for dithering, shape: {dithered.shape}")
+            # Just use simple thresholding for 1D arrays
+            return dithered > threshold
+        
+        # Normal 2D image processing
         height, width = dithered.shape
         
         # Process each pixel
@@ -181,6 +234,13 @@ class GrayscaleProcessingStrategy(BaseProcessingStrategy):
         Returns:
             Dithered binary image.
         """
+        # BUGFIX: Check if image is a 1D array
+        if len(image.shape) == 1:
+            # 1D array handling
+            print(f"WARNING: Received 1D array for ordered dithering, shape: {image.shape}")
+            # Just use simple thresholding for 1D arrays
+            return image > threshold
+            
         # Bayer matrix for ordered dithering
         bayer_matrix = np.array([
             [0, 8, 2, 10],

@@ -119,17 +119,27 @@ class EdgeDetectionStrategy(BaseDetectionStrategy):
                 # Calculate edge density
                 edge_density = np.mean(window)
                 
-                # Convert to grayscale probability
-                # - Low density: likely neither (text has some edges)
-                # - Medium density: likely grayscale (photos have moderate edge density)
-                # - High density: likely binary (dense text has high edge density)
+                # DEBUG
+                if y == 0 and x == 0:
+                    print(f"Window 0,0 - Edge density: {edge_density}")
+                
+                # Convert to grayscale probability - be MUCH more aggressive
+                # Original mapping:
+                # - Low density < min_edge_density: 0.2
+                # - High density > max_edge_density: 0.3 
+                # - Mid-range: 0.7 to 1.0
+                
+                # New more aggressive mapping:
+                # - Low density < min_edge_density: 0.6 (much higher base probability)
+                # - High density > max_edge_density: 0.4 (higher probability for text)
+                # - Mid-range: 0.8 to 1.0 (higher peak probability)
                 if edge_density < self.min_edge_density:
-                    grayscale_prob = 0.2  # Low probability for very smooth regions
+                    grayscale_prob = 0.6  # Higher base probability for smooth regions
                 elif edge_density > self.max_edge_density:
-                    grayscale_prob = 0.3  # Low-medium probability for very dense edges (text)
+                    grayscale_prob = 0.4  # Higher probability for dense edges
                 else:
-                    # Scale linearly from 0.7 to 1.0 for mid-range edge densities
-                    grayscale_prob = 0.7 + 0.3 * ((edge_density - self.min_edge_density) / 
+                    # Scale linearly from 0.8 to 1.0 for mid-range edge densities
+                    grayscale_prob = 0.8 + 0.2 * ((edge_density - self.min_edge_density) / 
                                                 (self.max_edge_density - self.min_edge_density))
                 
                 # Update result map

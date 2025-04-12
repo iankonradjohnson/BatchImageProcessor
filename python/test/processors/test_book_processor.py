@@ -7,10 +7,11 @@ from python.src.processors.batch.dual_page_processor import DualPageProcessor
 class TestBookProcessor(TestCase):
     def setUp(self) -> None:
         book_config = {
-            "name": "/path/to/images",
+            "input_dir": "/path/to/input",
+            "output_dir": "/path/to/output",
             "processors": [{"type": "ImageRotator"}],
         }
-        self.processor = DualPageProcessor(book_config, "", "")
+        self.processor = DualPageProcessor(book_config)
 
     @mock.patch("os.listdir")
     @mock.patch.object(ProcessPoolExecutor, "submit")

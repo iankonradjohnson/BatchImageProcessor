@@ -57,27 +57,94 @@ class RegionDetectionEngine:
         Returns:
             Tuple of (list of regions, probability map).
         """
-        # Get all strategies
-        detection_config = self.config.get('detection', {})
-        strategies = self.strategy_provider.get_all_strategies(detection_config)
+        # Enhanced detection approach with multiple features
         
-        # Analyze image with each strategy
-        results = []
-        weights = []
-        for strategy in strategies:
-            strategy_name = strategy.__class__.__name__.replace('Strategy', '').lower()
-            if strategy_name in self.strategy_weights:
-                weight = self.strategy_weights[strategy_name]
-                if weight > 0:
-                    results.append(strategy.analyze(image))
-                    weights.append(weight)
+        print("USING ENHANCED DETECTION APPROACH")
         
-        # Combine results
-        if not results:
-            # Fallback: create empty probability map
-            probability_map = np.zeros(image.shape[:2], dtype=np.float32)
+        # Convert image to grayscale if needed
+        if len(image.shape) > 2 and image.shape[2] > 1:
+            gray_img = np.mean(image, axis=2).astype(np.uint8)
         else:
-            probability_map = self.strategy_provider.combine_results(results, weights)
+            gray_img = image.copy()
+        
+        h, w = gray_img.shape[:2]
+        window_size = 32  # Smaller windows for finer detail
+        stride = 16
+        
+        # Create a probability map
+        probability_map = np.zeros((h, w), dtype=np.float32)
+        
+        # Import additional tools for better detection
+        from skimage.feature import local_binary_pattern
+        from skimage.filters import sobel
+        from scipy.stats import entropy
+        
+        # Precompute edge map for speed
+        edge_map = sobel(gray_img)
+        
+        # Values indicating more confidence in grayscale detection
+        very_high_prob = 0.9
+        high_prob = 0.7
+        medium_prob = 0.5
+        low_prob = 0.2
+        
+        print("Analyzing image regions...")
+        
+        # Simplified approach for speed - focus on the most important metrics
+        print("Using fast detection algorithm...")
+        
+        # For each window, we'll only calculate the most discriminative features
+        for y in range(0, h - window_size + 1, stride):
+            for x in range(0, w - window_size + 1, stride):
+                window = gray_img[y:y+window_size, x:x+window_size]
+                
+                # Just use these two key metrics:
+                # 1. Unique values count - high for grayscale, low for binary
+                # 2. Standard deviation - high for grayscale, low for binary or flat areas
+                
+                unique_values = len(np.unique(window))
+                std_dev = np.std(window)
+                
+                # Simple decision rules for grayscale detection
+                if std_dev > 25 and unique_values > 30:
+                    # Definitely grayscale - high variance and many unique values
+                    probability = very_high_prob
+                elif std_dev > 15 and unique_values > 20:
+                    # Likely grayscale
+                    probability = high_prob
+                elif std_dev > 10 and unique_values > 10:
+                    # Possibly grayscale
+                    probability = medium_prob
+                elif std_dev > 5 and unique_values > 5:
+                    # Slight chance of grayscale
+                    probability = low_prob
+                else:
+                    # Likely binary
+                    probability = 0.0
+                
+                # Set probability
+                probability_map[y:y+window_size, x:x+window_size] = probability
+                
+        # IMPORTANT: Force grayscale for images that look like photographs
+        # Calculate global metrics to detect photographic images
+        global_std = np.std(gray_img)
+        global_unique = len(np.unique(gray_img)) / 256.0  # Normalize by max possible
+        
+        print(f"Global image metrics - StdDev: {global_std:.2f}, Unique Values: {len(np.unique(gray_img))} ({global_unique:.2%})")
+        
+        # If the whole image looks like a photograph, force most areas to be grayscale
+        if global_std > 40 and global_unique > 0.3:
+            print("IMAGE APPEARS TO BE MOSTLY PHOTOGRAPHIC - Forcing grayscale detection")
+            # Create a base probability for the entire image
+            probability_map = np.clip(probability_map, 0.5, 1.0)
+        
+        # Smooth the probability map with a Gaussian filter
+        from scipy.ndimage import gaussian_filter
+        probability_map = gaussian_filter(probability_map, sigma=2.0)
+        
+        # Print stats about detection
+        print(f"Enhanced detection - Min: {np.min(probability_map):.2f}, Max: {np.max(probability_map):.2f}, Mean: {np.mean(probability_map):.2f}")
+        print(f"Non-zero probability pixels: {np.sum(probability_map > 0) / (h * w) * 100:.2f}%")
         
         # Extract regions
         grayscale_regions = self.region_extractor.extract_regions(probability_map)
