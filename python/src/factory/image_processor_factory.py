@@ -1,5 +1,8 @@
+from python.src.processors.image.brightness_contrast import BrightnessContrast
 from python.src.processors.image.color_balance import ColorBalance
 from python.src.processors.image.color_inverter import ColorInverter
+from python.src.processors.image.dither_greyscale import DitherGreyscale
+from python.src.processors.image.dpi_metadata import DpiMetadata
 from python.src.processors.image.dual_page_cropper import DualPageCropper
 from python.src.processors.image.gaussian_blur import GaussianBlur
 from python.src.processors.image.greyscale import Greyscale
@@ -7,6 +10,7 @@ from python.src.processors.image.image_augmentor import ImageAugmentor
 from python.src.processors.image.image_mode_converter import ImageModeConverter
 from python.src.processors.image.image_processor import ImageProcessor
 from python.src.processors.image.image_rotator import ImageRotator
+from python.src.processors.image.levles_adjustment import LevelsAdjustment
 from python.src.processors.image.moire_processor import MoireProcessor
 from python.src.processors.image.red_blue_channel_swap import RedBlueChannelSwap
 from python.src.processors.image.resize_processor import ResizeProcessor
@@ -61,5 +65,18 @@ class ImageProcessorFactory:
 
         if processor_type == "VibranceSaturation":
             return VibranceSaturation(config)
+
+        if processor_type == "DitherGreyscale":
+            return DitherGreyscale(config)
+
+        if processor_type == "BrightnessContrast":
+            return BrightnessContrast(config)
+
+        if processor_type == "DpiMetadata":
+            return DpiMetadata(config)
+
+        if processor_type == "LevelsAdjustment":
+            return LevelsAdjustment(config)
+
 
         raise ValueError("Processor invalid")

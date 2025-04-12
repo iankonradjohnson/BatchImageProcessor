@@ -21,13 +21,13 @@ class ImagePipeline:
             image_path = os.path.join(self.input_dir, filepath)
             save_path = os.path.join(
                 self.output_dir,
-                f"{basename}_{str.zfill(str(copy_num), 3)}.png")
+                f"{basename}.png")
 
             with Image.open(image_path) as img:
                 if not self.is_image(image_path):
                     return
                 for processor in self.processors:
-                    original_iage = img
+                    original_img = img
                     img = processor.process(img, is_left)
 
                     # If image is none, this is a result of a filter and image should not be saved
@@ -35,7 +35,9 @@ class ImagePipeline:
                         if not os.path.exists(self.deleted_dir):
                             os.mkdir(self.deleted_dir)
 
-                        original_iage.save(os.path.join(self.deleted_dir, filepath))
+                        filename = os.path.basename(filepath)
+
+                        original_img.save(os.path.join(self.deleted_dir, filename))
                         return
 
                 if not os.path.exists(self.output_dir):

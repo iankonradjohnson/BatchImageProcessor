@@ -3,7 +3,15 @@ directories:
     output_dir: "/Users/iankonradjohnson/Library/CloudStorage/GoogleDrive-iankonradjohnson@gmail.com/My Drive/base/abacus/BookProjects/Fragments_darchitecture_du_Moyen_age_et_de_la_Renaissance/cropped-out/cropped-downsampled"
     type: "SinglePage"
     processors:
-      - type: "BrightnessContrast"
+      - type: "LevelsAdjustment"
+        black_point: 0
+        white_point: 234
+        gamma: 1.1
       - type: "Resize"
-        resize_range: [.8, .8]
-
+        resize_range: [.54, .54]
+        resampling_method: "nearest"
+      - type: "Greyscale"
+      - type: "DpiMetadata"
+        dpi: 300
+      - type: "DitherGreyscale"
+        dither_type: "ordered"

@@ -1,3 +1,5 @@
+import os
+
 import cv2
 import numpy as np
 from PIL import Image
@@ -9,6 +11,7 @@ class ThresholdFilter(ImageProcessor):
     def __init__(self, config):
         self.min_thresh = config.get("min_thresh")
         self.max_thresh = config.get("max_thresh")
+        self.blank_dir = config.get("deleted_dir")
 
     def process(self, img: Image, is_left: bool = None) -> Image:
         img_cv2 = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR)

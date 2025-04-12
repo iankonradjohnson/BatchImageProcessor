@@ -1,7 +1,7 @@
 directories:
-  - input_dir: "/Users/iankonradjohnson/base/abacus/BookProjects/TheModelArchitect/Volume1/images/deskewed/binary_out"
-    output_dir: "/Users/iankonradjohnson/base/abacus/BookProjects/TheModelArchitect/Volume1/images/deskewed/binary_out_downsampled"
+  - input_dir: "/Users/iankonradjohnson/Library/CloudStorage/GoogleDrive-iankonradjohnson@gmail.com/My Drive/base/abacus/SocialMedia/Posts/TerraCotta/Post1/good"
+    output_dir: "/Users/iankonradjohnson/Library/CloudStorage/GoogleDrive-iankonradjohnson@gmail.com/My Drive/base/abacus/SocialMedia/Posts/TerraCotta/Post1/good-downsampled"
     type: "SinglePage"
     processors:
       - type: "Resize"
-        resize_range: [0.4, 0.4]
+        resize_range: [0.25, 0.25]

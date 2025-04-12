@@ -1,9 +1,9 @@
 directories:
   - input_dir: "/Users/iankonradjohnson/Library/CloudStorage/GoogleDrive-iankonradjohnson@gmail.com/My Drive/base/abacus/BookProjects/Fragments_darchitecture_du_Moyen_age_et_de_la_Renaissance/cropped-out/cropped-downsampled-old"
-    output_dir: "/Users/iankonradjohnson/Library/CloudStorage/GoogleDrive-iankonradjohnson@gmail.com/My Drive/base/abacus/BookProjects/Fragments_darchitecture_du_Moyen_age_et_de_la_Renaissance/cropped-out/cropped-downsampled"
+    output_dir: "/Users/iankonradjohnson/Library/CloudStorage/GoogleDrive-iankonradjohnson@gmail.com/My Drive/base/abacus/BookProjects/Fragments_darchitecture_du_Moyen_age_et_de_la_Renaissance/cropped-out/cropped-downsampled-bright-50x "
     type: "SinglePage"
     processors:
       - type: "BrightnessContrast"
-      - type: "Resize"
-        resize_range: [.8, .8]
+        brightness: 1.5x
+#        contrast: 1.25
 
