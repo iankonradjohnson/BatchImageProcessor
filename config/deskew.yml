@@ -1,0 +1,12 @@
+directories:
+  - input_dir: "/Users/iankonradjohnson/Library/CloudStorage/GoogleDrive-iankonradjohnson@gmail.com/My Drive/base/abacus/BookProjects/Sample Book/gri_33125016354728_jp2"
+    output_dir: "/Users/iankonradjohnson/Library/CloudStorage/GoogleDrive-iankonradjohnson@gmail.com/My Drive/base/abacus/BookProjects/Sample Book/out"
+    type: "SinglePage"
+    processors:
+      - type: "Deskew"
+        enabled: true
+        threshold: "40%"
+        add_border: true
+        border_size: "5x5"
+        trim_borders: true
+        fuzz_value: "1%"

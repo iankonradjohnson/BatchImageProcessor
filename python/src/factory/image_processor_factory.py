@@ -15,6 +15,7 @@ from python.src.processors.image.levles_adjustment import LevelsAdjustment
 from python.src.processors.image.moire_processor import MoireProcessor
 from python.src.processors.image.red_blue_channel_swap import RedBlueChannelSwap
 from python.src.processors.image.resize_processor import ResizeProcessor
+from python.src.processors.image.deskew import Deskew
 from python.src.processors.image.threshold_filter import ThresholdFilter
 from python.src.processors.image.threshold_processor import ThresholdProcessor
 from python.src.processors.image.vibrance_saturation import VibranceSaturation
@@ -81,6 +82,9 @@ class ImageProcessorFactory:
             
         if processor_type == "GreyscaleBinarySeparator":
             return GreyscaleBinarySeparator(config)
+            
+        if processor_type == "Deskew":
+            return Deskew(config)
 
 
         raise ValueError("Processor invalid")

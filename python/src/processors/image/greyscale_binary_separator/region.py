@@ -77,17 +77,38 @@ class RegionExtractor:
         Initialize the region extractor.
         
         Args:
-            config: Configuration dictionary with parameters:
-                - threshold: Probability threshold for region detection (default: 0.5)
-                - min_region_size: Minimum region size in pixels (default: 1000)
-                - expand_pixels: Pixels to expand regions by (default: 5)
-                - fill_holes: Whether to fill holes in regions (default: True)
+            config: Configuration dictionary with parameters - see greyscale_binary_separator.yml for details
         """
         self.config = config or {}
+        
+        # Basic region extraction parameters
         self.threshold = self.config.get('threshold', 0.5)
         self.min_region_size = self.config.get('min_region_size', 1000)
         self.expand_pixels = self.config.get('expand_pixels', 5)
         self.fill_holes = self.config.get('fill_holes', True)
+        
+        # Shape metrics for blob detection
+        self.max_perimeter_area_ratio = self.config.get('max_perimeter_area_ratio', 0.1)
+        self.min_blob_area = self.config.get('min_blob_area', 1000)
+        self.blob_circularity = self.config.get('blob_circularity', 0.2)
+        
+        # Text detection parameters
+        text_detection = self.config.get('text_detection', {})
+        self.text_perimeter_area_threshold = text_detection.get('text_perimeter_area_threshold', 0.08)
+        self.min_text_circularity = text_detection.get('min_text_circularity', 0.1)
+        
+        # Size-based shape requirements
+        self.very_large_region_multiplier = self.config.get('very_large_region_multiplier', 10)
+        self.large_region_ratio_multiplier = self.config.get('large_region_ratio_multiplier', 1.2)
+        self.large_region_circularity_multiplier = self.config.get('large_region_circularity_multiplier', 0.6)
+        
+        self.medium_region_divider = self.config.get('medium_region_divider', 4)
+        self.medium_region_ratio_multiplier = self.config.get('medium_region_ratio_multiplier', 0.9)
+        self.medium_region_circularity_multiplier = self.config.get('medium_region_circularity_multiplier', 0.8)
+        
+        self.small_region_ratio_multiplier = self.config.get('small_region_ratio_multiplier', 0.5)
+        self.small_region_circularity_multiplier = self.config.get('small_region_circularity_multiplier', 2.0)
+        self.small_region_min_area = self.config.get('small_region_min_area', 2000)
         
     def extract_regions(self, probability_map: np.ndarray) -> List[Region]:
         """
@@ -152,31 +173,108 @@ class RegionExtractor:
         
         # Extract regions
         regions = []
-        for i in range(1, num_regions + 1):
-            region_mask = labeled_map == i
+        
+        # Import regionprops for shape analysis
+        from skimage.measure import regionprops
+        
+        # Calculate properties for all regions at once (more efficient)
+        props = regionprops(labeled_map)
+        
+        print(f"Found {len(props)} potential regions, analyzing shapes...")
+        
+        # Track shape metrics for diagnostics
+        perimeter_area_ratios = []
+        circularities = []
+        areas = []
+        
+        for prop in props:
+            region_label = prop.label
+            region_mask = labeled_map == region_label
             
-            # Create initial region
-            region = Region(region_mask, 'grayscale', 1.0)
+            # Calculate shape metrics
+            area = prop.area
+            perimeter = prop.perimeter
             
-            # Expand region significantly to capture nearby grayscale pixels
-            if self.expand_pixels > 0:
-                # Expand more aggressively for better coverage
-                region.expand(self.expand_pixels)
-            
-            # Use a much smaller minimum region size to capture small grayscale elements
-            # But avoid tiny regions that are likely just noise
-            if np.sum(region.mask) < max(self.min_region_size // 4, 25):
+            # Skip tiny regions immediately
+            if area < max(self.min_blob_area // 4, 25):
                 continue
                 
+            # Calculate perimeter-to-area ratio (smaller is better for blobs)
+            perimeter_area_ratio = perimeter / area if area > 0 else float('inf')
+            perimeter_area_ratios.append(perimeter_area_ratio)
+            
+            # Calculate circularity (1.0 = perfect circle, approaches 0 for elongated shapes)
+            # Formula: 4 * pi * area / perimeter^2
+            circularity = (4 * np.pi * area) / (perimeter * perimeter) if perimeter > 0 else 0
+            circularities.append(circularity)
+            
+            areas.append(area)
+            
+            # Filter based on shape metrics to identify blob-like regions
+            # Lower perimeter/area ratio = more blob-like (less line-like)
+            # Higher circularity = more rounded (less elongated)
+            
+            # Check if this region looks like text based on perimeter/area ratio
+            looks_like_text = perimeter_area_ratio > self.text_perimeter_area_threshold
+            
+            # For very large regions, be more permissive with shape requirements
+            very_large_area = self.min_blob_area * self.very_large_region_multiplier
+            if area > very_large_area:
+                # Even large regions should be rejected if they clearly look like text
+                if looks_like_text and circularity < self.min_text_circularity:
+                    is_blob = False
+                    print(f"Rejecting large text-like region with area {area}, P/A ratio {perimeter_area_ratio:.4f}")
+                else:
+                    is_blob = True  # Keep most very large regions
+                    print(f"Keeping very large region with area {area}")
+            
+            # For large regions, use relaxed requirements
+            elif area > self.min_blob_area:
+                is_blob = (perimeter_area_ratio <= self.max_perimeter_area_ratio * self.large_region_ratio_multiplier and 
+                          circularity >= self.blob_circularity * self.large_region_circularity_multiplier and
+                          not looks_like_text)  # Explicit text check
+            
+            # For medium regions, use standard requirements
+            elif area > self.min_blob_area / self.medium_region_divider:
+                is_blob = (perimeter_area_ratio <= self.max_perimeter_area_ratio * self.medium_region_ratio_multiplier and 
+                          circularity >= self.blob_circularity * self.medium_region_circularity_multiplier and
+                          not looks_like_text)
+            
+            # For small regions, be very strict to avoid text and lines
+            else:
+                is_blob = (perimeter_area_ratio <= self.max_perimeter_area_ratio * self.small_region_ratio_multiplier and 
+                          circularity >= self.blob_circularity * self.small_region_circularity_multiplier and
+                          area >= self.small_region_min_area)  # Minimum size threshold for small regions
+            
+            # Skip regions that aren't blob-like
+            if not is_blob:
+                continue
+                
+            # Create region and expand
+            region = Region(region_mask, 'grayscale', 1.0)
+            
+            # Expand region to capture nearby grayscale pixels
+            if self.expand_pixels > 0:
+                region.expand(self.expand_pixels)
+            
             # Calculate confidence based on average probability in the original region
             confidence = np.mean(probability_map[region_mask])
             region.confidence = confidence
             
             regions.append(region)
+            
+        # Print shape analysis statistics
+        if perimeter_area_ratios:
+            print(f"Shape analysis - Perimeter/Area ratios: min={min(perimeter_area_ratios):.4f}, "
+                 f"max={max(perimeter_area_ratios):.4f}, mean={np.mean(perimeter_area_ratios):.4f}")
+            print(f"Shape analysis - Circularities: min={min(circularities):.4f}, "
+                 f"max={max(circularities):.4f}, mean={np.mean(circularities):.4f}")
+            print(f"Shape analysis - Areas: min={min(areas)}, max={max(areas)}, mean={np.mean(areas):.1f}")
+            print(f"Kept {len(regions)} of {len(props)} regions after shape filtering")
         
         # If we have too many small regions, merge nearby ones
-        if len(regions) > 50:
-            print(f"Found {len(regions)} regions, which is a lot. Merging nearby regions...")
+        if len(regions) > 20:
+            print(f"Found {len(regions)} regions after filtering, still merging nearby ones...")
             regions = self._merge_nearby_regions(regions)
             
         # Debug output

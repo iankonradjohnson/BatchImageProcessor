@@ -83,7 +83,29 @@ class GreyscaleBinarySeparator(ImageProcessor):
             
             # Save visualization if enabled
             if self.save_visualization:
-                self._save_visualizations(image, regions, probability_map, processed_image)
+                # Calculate shape metrics for visualization
+                shape_metrics = {}
+                from skimage.measure import regionprops
+                
+                for i, region in enumerate(regions):
+                    if region.region_type == 'grayscale':
+                        # Create a temporary mask just for shape analysis
+                        tmp_mask = region.mask.astype(np.uint8)
+                        props = regionprops(tmp_mask)
+                        if props:
+                            prop = props[0]
+                            area = prop.area
+                            perimeter = prop.perimeter
+                            perimeter_area_ratio = perimeter / area if area > 0 else 0
+                            circularity = (4 * np.pi * area) / (perimeter * perimeter) if perimeter > 0 else 0
+                            shape_metrics[i] = {
+                                'area': area,
+                                'perimeter': perimeter,
+                                'perimeter_area_ratio': perimeter_area_ratio,
+                                'circularity': circularity
+                            }
+                
+                self._save_visualizations(image, regions, probability_map, processed_image, shape_metrics=shape_metrics)
                 
             # Convert back to PIL image and return
             return Image.fromarray(processed_image)
@@ -191,7 +213,8 @@ class GreyscaleBinarySeparator(ImageProcessor):
             regions: List[Region], 
             probability_map: np.ndarray,
             processed_image: np.ndarray,
-            output_prefix: str = 'visualization'
+            output_prefix: str = 'visualization',
+            shape_metrics: Dict = None
         ) -> None:
         """
         Save visualization images.
@@ -202,6 +225,7 @@ class GreyscaleBinarySeparator(ImageProcessor):
             probability_map: The probability map.
             processed_image: The processed image.
             output_prefix: Prefix for output files.
+            shape_metrics: Optional dictionary of shape metrics for regions.
         """
         import os
         import matplotlib.pyplot as plt
@@ -210,8 +234,8 @@ class GreyscaleBinarySeparator(ImageProcessor):
         # Create timestamp
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
         
-        # Generate detection visualization
-        detection_viz = self.detection_engine.visualize_regions(image, regions, probability_map)
+        # Generate detection visualization with shape metrics
+        detection_viz = self.detection_engine.visualize_regions(image, regions, probability_map, shape_metrics)
         
         # Generate processing visualization
         processing_viz = self.processing_engine.visualize_processing(image, regions, processed_image)

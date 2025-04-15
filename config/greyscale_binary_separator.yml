@@ -6,12 +6,35 @@ directories:
       - type: "GreyscaleBinarySeparator"
         # Detection configuration
         detection:
-          # Region extraction settings - much less sensitive to grayscale content
+          # Region extraction settings with blob shape analysis
           region_extraction:
-            threshold: 0.5             # Much higher threshold for minimal sensitivity
-            min_region_size: 5000      # Much larger minimum size to only detect major regions
-            expand_pixels: 2           # Minimal expansion to avoid including binary content
-            fill_holes: true           # Fill holes in regions
+            threshold: 0.05              # Probability threshold for initial detection
+            min_region_size: 100000    # Minimum region size in pixels
+            expand_pixels: 0           # Pixels to expand regions by
+            fill_holes: false           # Whether to fill holes in regions
+            
+            # Blob shape metrics
+            max_perimeter_area_ratio: 0.2   # Maximum perimeter/area ratio (lower = more blob-like, less line-like)
+            min_blob_area: 20000             # Minimum area for a blob to be considered
+#            blob_circularity: 0.17           # Minimum circularity (0-1, higher = more circular)
+            
+            # Text detection parameters
+            text_detection:
+              text_perimeter_area_threshold: 0.08   # P/A ratio threshold above which regions look like text
+              min_text_circularity: 0.1             # Circularity below which textual regions are rejected
+            
+            # Size-based shape requirements
+            very_large_region_multiplier: 10       # Multiplier for min_blob_area to identify very large regions
+            large_region_ratio_multiplier: 1.2     # P/A ratio multiplier for large regions
+            large_region_circularity_multiplier: 0.6  # Circularity multiplier for large regions
+            
+            medium_region_divider: 4              # Divider for min_blob_area to identify medium regions
+            medium_region_ratio_multiplier: 0.9   # P/A ratio multiplier for medium regions
+            medium_region_circularity_multiplier: 0.8  # Circularity multiplier for medium regions
+            
+            small_region_ratio_multiplier: 0.5    # P/A ratio multiplier for small regions
+            small_region_circularity_multiplier: 2.0  # Circularity multiplier for small regions
+            small_region_min_area: 2000           # Minimum area for small regions
 
         # Processing configuration
         processing:

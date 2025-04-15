@@ -93,20 +93,74 @@ class RegionDetectionEngine:
         # Simplified approach for speed - focus on the most important metrics
         print("Using fast detection algorithm...")
         
+        # We'll add some preprocessing to detect line/text features but with less sensitivity
+        print("Preprocessing image to detect text and line elements...")
+        
+        # Import additional tools needed for line detection
+        from skimage.feature import canny
+        from skimage.morphology import skeletonize
+        from scipy.ndimage import gaussian_filter
+        
+        # DIFFERENT APPROACH: Use local binary patterns to detect text
+        from skimage.feature import local_binary_pattern
+        
+        # Calculate LBP
+        radius = 2
+        n_points = 8
+        lbp = local_binary_pattern(gray_img, n_points, radius, 'uniform')
+        
+        # Create a binary mask of areas with high LBP variance (textured areas)
+        from scipy.ndimage import uniform_filter
+        
+        # Calculate local variance of LBP
+        window_size = 21
+        lbp_mean = uniform_filter(lbp, size=window_size)
+        lbp_sqr_mean = uniform_filter(lbp**2, size=window_size)
+        lbp_variance = lbp_sqr_mean - lbp_mean**2
+        
+        # Threshold variance to find text-like texture
+        text_line_threshold = 10
+        text_line_mask = lbp_variance > text_line_threshold
+        
+        # Use moderate dilation to cover text areas properly
+        from skimage.morphology import binary_dilation, disk
+        text_line_mask = binary_dilation(text_line_mask, disk(2))
+        
+        # Create a visualization of detected text/lines if needed
+        # plt.figure(figsize=(10, 10))
+        # plt.imshow(text_line_mask, cmap='gray')
+        # plt.title('Detected Text and Line Features')
+        # plt.axis('off')
+        # plt.savefig(os.path.join(self.config.get('visualization_path', '.'), 'text_line_mask.png'))
+        # plt.close()
+        
+        print(f"Identified approximately {np.sum(text_line_mask) / (h * w) * 100:.2f}% of the image as text/line features")
+
         # For each window, we'll only calculate the most discriminative features
         for y in range(0, h - window_size + 1, stride):
             for x in range(0, w - window_size + 1, stride):
                 window = gray_img[y:y+window_size, x:x+window_size]
                 
-                # Just use these two key metrics:
+                # Key metrics:
                 # 1. Unique values count - high for grayscale, low for binary
                 # 2. Standard deviation - high for grayscale, low for binary or flat areas
+                # 3. Text/line density - high for text/line areas, low for photos
                 
                 unique_values = len(np.unique(window))
                 std_dev = np.std(window)
                 
-                # Simple decision rules for grayscale detection with REDUCED SENSITIVITY
-                if std_dev > 35 and unique_values > 40:
+                # NEW: Check if this window contains significant text/line features
+                window_text_mask = text_line_mask[y:y+window_size, x:x+window_size]
+                text_density = np.mean(window_text_mask) if window_text_mask.size > 0 else 0
+                
+                # Calculate probability based on all factors
+                
+                # If high text/line density, force this to be classified as binary
+                # Using a higher threshold to be less aggressive
+                if text_density > 0.4:  # More than 40% of window is text/lines
+                    probability = 0.0  # Force to be considered binary
+                # Otherwise use our standard rules
+                elif std_dev > 35 and unique_values > 40:
                     # Definitely grayscale - high variance and many unique values
                     probability = very_high_prob
                 elif std_dev > 25 and unique_values > 30:
@@ -162,7 +216,7 @@ class RegionDetectionEngine:
         
         return regions, probability_map
     
-    def visualize_regions(self, image: np.ndarray, regions: List[Region], probability_map: np.ndarray = None) -> np.ndarray:
+    def visualize_regions(self, image: np.ndarray, regions: List[Region], probability_map: np.ndarray = None, shape_metrics: Dict = None) -> np.ndarray:
         """
         Visualize detected regions.
         
@@ -170,6 +224,7 @@ class RegionDetectionEngine:
             image: The input image.
             regions: List of detected regions.
             probability_map: Optional probability map to visualize.
+            shape_metrics: Optional dictionary of shape metrics for regions.
             
         Returns:
             Visualization image.
@@ -177,8 +232,8 @@ class RegionDetectionEngine:
         import matplotlib.pyplot as plt
         from matplotlib.colors import LinearSegmentedColormap
         
-        # Create figure
-        fig, axes = plt.subplots(1, 3 if probability_map is not None else 2, figsize=(15, 5))
+        # Create figure with 4 subplots to show text detection
+        fig, axes = plt.subplots(1, 4, figsize=(20, 5))
         
         # Show original image
         axes[0].imshow(image)
@@ -206,18 +261,91 @@ class RegionDetectionEngine:
                 region_viz[region.mask] = np.array([100, 100, 255], dtype=np.uint8)
         
         axes[1].imshow(region_viz)
-        axes[1].set_title('Detected Regions')
+        
+        # If we have shape metrics, annotate the regions
+        if shape_metrics:
+            # Calculate region centroids for annotation placement
+            for i, region in enumerate(regions):
+                if region.region_type == 'grayscale' and i in shape_metrics:
+                    # Find centroid of the region
+                    y_indices, x_indices = np.where(region.mask)
+                    if len(y_indices) > 0 and len(x_indices) > 0:
+                        centroid_y = int(np.mean(y_indices))
+                        centroid_x = int(np.mean(x_indices))
+                        
+                        # Create annotation text
+                        metrics = shape_metrics[i]
+                        area = metrics['area']
+                        circularity = metrics['circularity']
+                        ratio = metrics['perimeter_area_ratio']
+                        
+                        # Add annotation
+                        axes[1].text(centroid_x, centroid_y, f"Area: {area}\nCirc: {circularity:.2f}\nP/A: {ratio:.3f}",
+                                    color='white', fontsize=8, ha='center', va='center',
+                                    bbox=dict(boxstyle="round,pad=0.3", fc='black', alpha=0.7))
+        
+        axes[1].set_title('Detected Regions (with Shape Metrics)')
         axes[1].axis('off')
         
-        # Show probability map if provided
+        # Show probability map
         if probability_map is not None:
             # Create colormap: blue (low) to red (high)
             cmap = LinearSegmentedColormap.from_list('my_cmap', ['blue', 'lightblue', 'yellow', 'red'])
             
             im = axes[2].imshow(probability_map, cmap=cmap, vmin=0, vmax=1)
-            axes[2].set_title('Probability Map')
+            axes[2].set_title('Grayscale Probability Map')
             axes[2].axis('off')
             plt.colorbar(im, ax=axes[2], fraction=0.046, pad=0.04)
+        
+        # Show text/line detection mask
+        try:
+            # Recreate the text/line mask for visualization
+            if len(image.shape) > 2 and image.shape[2] > 1:
+                gray_img = np.mean(image, axis=2).astype(np.uint8)
+            else:
+                gray_img = image.copy()
+                
+            # Use local binary patterns to detect text
+            from skimage.feature import local_binary_pattern
+            from skimage.morphology import binary_dilation, disk
+            from scipy.ndimage import uniform_filter
+            
+            # Calculate LBP
+            radius = 2
+            n_points = 8
+            lbp = local_binary_pattern(gray_img, n_points, radius, 'uniform')
+            
+            # Calculate local variance of LBP
+            window_size = 21
+            lbp_mean = uniform_filter(lbp, size=window_size)
+            lbp_sqr_mean = uniform_filter(lbp**2, size=window_size)
+            lbp_variance = lbp_sqr_mean - lbp_mean**2
+            
+            # Threshold variance to find text-like texture
+            text_line_threshold = 10
+            text_line_mask = lbp_variance > text_line_threshold
+            text_line_mask = binary_dilation(text_line_mask, disk(2))
+            
+            # Create text mask visualization (overlay on darkened image)
+            text_viz = np.zeros((*image.shape[:2], 3), dtype=np.uint8)
+            
+            if len(image.shape) == 3 and image.shape[2] == 3:
+                text_viz = image.copy() // 2
+            else:
+                text_viz = np.stack([gray_img // 2] * 3, axis=2)
+                
+            # Green overlay for text/line areas
+            text_viz[text_line_mask] = np.array([50, 255, 50], dtype=np.uint8)
+            
+            axes[3].imshow(text_viz)
+            axes[3].set_title('Detected Text & Lines')
+            axes[3].axis('off')
+        except Exception as e:
+            # If text visualization fails, just show a blank image
+            print(f"Warning: Text visualization failed - {e}")
+            axes[3].imshow(np.zeros_like(region_viz))
+            axes[3].set_title('Text Detection (Failed)')
+            axes[3].axis('off')
         
         # Adjust layout and convert to image
         plt.tight_layout()
