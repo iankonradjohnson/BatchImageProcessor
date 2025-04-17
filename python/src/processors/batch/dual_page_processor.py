@@ -5,9 +5,9 @@ from multiprocessing import Pool, cpu_count
 
 from tqdm import tqdm
 
-from python.src.factory.image_processor_factory import ImageProcessorFactory
-from python.src.processors.batch.batch_processor import BatchProcessor
-from python.src.processors.pipeline.image_pipeline import ImagePipeline
+from factory.image_processor_factory import ImageProcessorFactory
+from processors.batch.batch_processor import BatchProcessor
+from processors.pipeline.image_pipeline import ImagePipeline
 
 
 class DualPageProcessor(BatchProcessor):

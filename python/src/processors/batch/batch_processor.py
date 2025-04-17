@@ -1,7 +1,7 @@
 import traceback
 
-from python.src.factory.image_processor_factory import ImageProcessorFactory
-from python.src.processors.pipeline.image_pipeline import ImagePipeline
+from factory.image_processor_factory import ImageProcessorFactory
+from processors.pipeline.image_pipeline import ImagePipeline
 
 
 class BatchProcessor:

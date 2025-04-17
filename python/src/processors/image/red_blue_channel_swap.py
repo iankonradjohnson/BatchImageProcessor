@@ -1,6 +1,6 @@
 from PIL import Image
 
-from python.src.processors.image.image_processor import ImageProcessor
+from processors.image.image_processor import ImageProcessor
 
 
 class RedBlueChannelSwap(ImageProcessor):

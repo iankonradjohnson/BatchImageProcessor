@@ -7,7 +7,7 @@ from PIL import Image, ImageOps, ImageDraw, ImageFilter
 from tqdm import tqdm
 from blend_modes import overlay
 
-from python.src.processors.image.image_processor import ImageProcessor
+from processors.image.image_processor import ImageProcessor
 
 ERASE_MODE = "Erase"
 NORMAL_MODE = "Normal"

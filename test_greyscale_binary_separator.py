@@ -12,7 +12,7 @@ from PIL import Image
 # Add the project directory to the path
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
-from python.src.processors.image.greyscale_binary_separator.greyscale_binary_separator import GreyscaleBinarySeparator
+from processors.image.greyscale_binary_separator.greyscale_binary_separator import GreyscaleBinarySeparator
 
 
 def main():

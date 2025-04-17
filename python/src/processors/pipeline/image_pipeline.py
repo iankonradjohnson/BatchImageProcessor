@@ -3,7 +3,7 @@ from typing import List
 
 from PIL import Image, UnidentifiedImageError
 
-from python.src.processors.image.image_processor import ImageProcessor
+from processors.image.image_processor import ImageProcessor
 
 Image.MAX_IMAGE_PIXELS = None
 

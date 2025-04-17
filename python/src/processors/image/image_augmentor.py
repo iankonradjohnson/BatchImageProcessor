@@ -2,7 +2,7 @@ from PIL import Image
 import numpy as np
 import albumentations as A
 
-from python.src.processors.image.image_processor import ImageProcessor
+from processors.image.image_processor import ImageProcessor
 
 class ImageAugmentor(ImageProcessor):
 

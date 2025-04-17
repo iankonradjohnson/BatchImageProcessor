@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-from python.src.processors.image.image_processor import ImageProcessor
+from processors.image.image_processor import ImageProcessor
 from PIL import Image, ImageEnhance
 
 

@@ -1,6 +1,6 @@
-from python.src.processors.batch.batch_processor import BatchProcessor
-from python.src.processors.batch.dual_page_processor import DualPageProcessor
-from python.src.processors.single_page_processor import SinglePageProcessor
+from processors.batch.batch_processor import BatchProcessor
+from processors.batch.dual_page_processor import DualPageProcessor
+from processors.single_page_processor import SinglePageProcessor
 
 
 class BatchProcessorFactory:

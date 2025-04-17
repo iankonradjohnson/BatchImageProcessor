@@ -1,7 +1,7 @@
 from PIL import Image
 import numpy as np
 
-from python.src.processors.image.image_processor import ImageProcessor
+from processors.image.image_processor import ImageProcessor
 
 
 class ThresholdProcessor(ImageProcessor):

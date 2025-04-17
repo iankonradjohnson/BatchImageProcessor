@@ -4,7 +4,7 @@ from multiprocessing import Pool, cpu_count
 
 from tqdm import tqdm
 
-from python.src.processors.batch.batch_processor import BatchProcessor
+from processors.batch.batch_processor import BatchProcessor
 
 
 class SinglePageProcessor(BatchProcessor):

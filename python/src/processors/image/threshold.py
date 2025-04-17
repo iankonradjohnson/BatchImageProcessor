@@ -4,7 +4,7 @@ import numpy as np
 from PIL import Image
 from tqdm import tqdm
 
-from python.src.processors.image.image_processor import ImageProcessor
+from processors.image.image_processor import ImageProcessor
 
 
 class MoireProcessor(ImageProcessor):

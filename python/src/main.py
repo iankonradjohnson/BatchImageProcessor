@@ -7,8 +7,8 @@ from multiprocessing import Pool, cpu_count
 from tqdm import tqdm
 import yaml
 
-from python.src.factory.batch_processor_factory import BatchProcessorFactory
-from python.src.processors.batch.dual_page_processor import DualPageProcessor
+from factory.batch_processor_factory import BatchProcessorFactory
+from processors.batch.dual_page_processor import DualPageProcessor
 
 
 def worker(dir_config):
