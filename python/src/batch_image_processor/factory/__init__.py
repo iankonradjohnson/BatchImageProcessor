@@ -1,0 +1,1 @@
+from batch_image_processor.factory.batch_processor_factory import BatchProcessorFactory

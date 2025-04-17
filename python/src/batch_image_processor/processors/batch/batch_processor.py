@@ -1,28 +1,22 @@
 import traceback
 
-from batch_image_processor.factory.image_processor_factory import ImageProcessorFactory
 from batch_image_processor.processors.pipeline.image_pipeline import ImagePipeline
 
 
 class BatchProcessor:
 
-    def __init__(self, config):
-        self.config = config
-        self.input_dir = config["input_dir"]
-        self.output_dir = config["output_dir"]
-        self.deleted_dir = config.get("deleted_dir", None)
-        self.copies = config.get("copies", 1)
+    def __init__(self, input_dir: str, output_dir: str, processors: list, deleted_dir: str = None, copies: int = 1):
+        self.input_dir = input_dir
+        self.output_dir = output_dir
+        self.processors = processors
+        self.deleted_dir = deleted_dir
+        self.copies = copies
 
     def batch_process(self, filename_li):
         pass
 
     def _create_pipeline(self) -> ImagePipeline:
-        processors = [
-            ImageProcessorFactory.create_processor(config)
-            for config in self.config["processors"]
-        ]
-
-        return ImagePipeline(processors, self.input_dir, self.output_dir, self.deleted_dir)
+        return ImagePipeline(self.processors, self.input_dir, self.output_dir, self.deleted_dir)
 
     def _process_single_image(self, filepath: str, is_left: bool = None, copy_num: int = None) -> None:
         try:

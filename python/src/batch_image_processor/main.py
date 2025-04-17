@@ -6,15 +6,29 @@ from concurrent.futures import ProcessPoolExecutor, as_completed
 from tqdm import tqdm
 import yaml
 
-from batch_image_processor.factory import BatchProcessorFactory
+from batch_image_processor.factory.batch_processor_factory import BatchProcessorFactory
+from batch_image_processor.factory.image_processor_factory import ImageProcessorFactory
 
 
 def worker(dir_config):
     """Process a single book."""
     try:
-        input_dir = dir_config['input_dir']
+        processor_type = dir_config.get("type")
+        input_dir = dir_config["input_dir"]
+        output_dir = dir_config["output_dir"]
+        deleted_dir = dir_config.get("deleted_dir", None)
+        copies = dir_config.get("copies", 1)
+        
         print(f"Processing directory: {input_dir}")
-        batch_processor = BatchProcessorFactory.create_batch_processor(dir_config)
+        
+        processors = [
+            ImageProcessorFactory.create_processor(processor_config)
+            for processor_config in dir_config["processors"]
+        ]
+        
+        batch_processor = BatchProcessorFactory.create_batch_processor(
+            processor_type, input_dir, output_dir, processors, deleted_dir, copies
+        )
 
         filename_li = [f for f in get_all_files(input_dir) if not os.path.basename(f).startswith(".")]
         batch_processor.batch_process(filename_li)
