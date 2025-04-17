@@ -1,8 +1,8 @@
 import unittest
 
-from factory.image_processor_factory import ImageProcessorFactory
-from processors.image.dual_page_cropper import DualPageCropper
-from processors.image.image_rotator import ImageRotator
+from batch_image_processor.factory import ImageProcessorFactory
+from batch_image_processor.processors.image import DualPageCropper
+from batch_image_processor.processors.image.image_rotator import ImageRotator
 
 
 class TestImageProcessorFactory(unittest.TestCase):

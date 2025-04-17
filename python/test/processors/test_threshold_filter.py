@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import patch, MagicMock
 from PIL import Image
 
-from processors.image.threshold_filter import ThresholdFilter
+from batch_image_processor.processors.image import ThresholdFilter
 
 
 class TestThresholdFilter(unittest.TestCase):

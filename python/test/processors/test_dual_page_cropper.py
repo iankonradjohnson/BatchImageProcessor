@@ -1,7 +1,7 @@
 import unittest
 from unittest import TestCase
 from PIL import Image, ImageDraw
-from processors.image.dual_page_cropper import DualPageCropper
+from batch_image_processor.processors.image import DualPageCropper
 
 
 class TestDualPageCropper(TestCase):

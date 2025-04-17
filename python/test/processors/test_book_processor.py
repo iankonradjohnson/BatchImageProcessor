@@ -1,7 +1,7 @@
 from concurrent.futures import ProcessPoolExecutor
 from unittest import TestCase, mock
 
-from processors.batch.dual_page_processor import DualPageProcessor
+from batch_image_processor.processors.batch.dual_page_processor import DualPageProcessor
 
 
 class TestBookProcessor(TestCase):

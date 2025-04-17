@@ -2,7 +2,7 @@ from unittest import TestCase
 
 from PIL import Image, ImageDraw
 
-from processors.image.image_rotator import ImageRotator
+from batch_image_processor.processors.image.image_rotator import ImageRotator
 
 
 def create_initial_image():
