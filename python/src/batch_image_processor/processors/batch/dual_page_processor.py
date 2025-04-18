@@ -6,12 +6,10 @@ from batch_image_processor.processors.batch.batch_processor import BatchProcesso
 
 
 class DualPageProcessor(BatchProcessor):
-    def __init__(self, config):
-        super().__init__(config)
+    def __init__(self, input_dir: str, output_dir: str, processors: list, deleted_dir: str = None, copies: int = 1):
+        super().__init__(input_dir, output_dir, processors, deleted_dir, copies)
 
     def batch_process(self, filename_li):
-        """Process a single book based on the provided configuration."""
-
         is_left = True
         with tqdm(total=len(filename_li * self.copies)) as pbar:
             with ProcessPoolExecutor() as executor:
