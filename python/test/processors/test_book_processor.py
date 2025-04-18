@@ -2,6 +2,7 @@ from concurrent.futures import ProcessPoolExecutor
 from unittest import TestCase, mock
 
 from batch_image_processor.processors.batch.dual_page_processor import DualPageProcessor
+from batch_image_processor.processors.batch.batch_processor import BatchProcessor
 
 
 class TestBookProcessor(TestCase):
@@ -9,7 +10,12 @@ class TestBookProcessor(TestCase):
         input_dir = "/path/to/input"
         output_dir = "/path/to/output"
         processors = [mock.MagicMock()]
+        
+        # First create the processor with a mock for _get_files_from_input_dir
         self.processor = DualPageProcessor(input_dir, output_dir, processors)
+        
+        # Then manually set the filename_li attribute
+        self.processor.filename_li = ["image1.jpg", "image2.jpg"]
 
     @mock.patch("batch_image_processor.processors.batch.dual_page_processor.tqdm")
     @mock.patch.object(ProcessPoolExecutor, "submit")
@@ -19,7 +25,7 @@ class TestBookProcessor(TestCase):
         mock_tqdm.return_value.__enter__.return_value = mock_progress_bar
         
         # When
-        self.processor.batch_process(["image1.jpg", "image2.jpg"])
+        self.processor.batch_process()
 
         # Then
         expected_calls = [

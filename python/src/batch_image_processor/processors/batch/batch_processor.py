@@ -1,3 +1,4 @@
+import os
 import traceback
 
 from batch_image_processor.processors.pipeline.image_pipeline import ImagePipeline
@@ -11,9 +12,19 @@ class BatchProcessor:
         self.processors = processors
         self.deleted_dir = deleted_dir
         self.copies = copies
+        self.filename_li = self._get_files_from_input_dir()
 
-    def batch_process(self, filename_li):
+    def batch_process(self):
         pass
+
+    def _get_files_from_input_dir(self):
+        """Get all files from input directory, excluding hidden files"""
+        file_list = []
+        for folder_name, _, filenames in os.walk(self.input_dir):
+            for filename in filenames:
+                if not os.path.basename(filename).startswith("."):
+                    file_list.append(os.path.join(folder_name, filename))
+        return file_list
 
     def _create_pipeline(self) -> ImagePipeline:
         return ImagePipeline(self.processors, self.input_dir, self.output_dir, self.deleted_dir)

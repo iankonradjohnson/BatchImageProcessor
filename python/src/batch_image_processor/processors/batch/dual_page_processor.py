@@ -9,13 +9,13 @@ class DualPageProcessor(BatchProcessor):
     def __init__(self, input_dir: str, output_dir: str, processors: list, deleted_dir: str = None, copies: int = 1):
         super().__init__(input_dir, output_dir, processors, deleted_dir, copies)
 
-    def batch_process(self, filename_li):
+    def batch_process(self):
         is_left = True
-        with tqdm(total=len(filename_li * self.copies)) as pbar:
+        with tqdm(total=len(self.filename_li * self.copies)) as pbar:
             with ProcessPoolExecutor() as executor:
                 futures = {}
 
-                for filename in filename_li:
+                for filename in self.filename_li:
                     for copy_num in range(self.copies):
                         futures.update({
                             executor.submit(self._process_single_image, filename, is_left, copy_num): filename})
