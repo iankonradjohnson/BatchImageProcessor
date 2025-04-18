@@ -80,7 +80,14 @@ class ImageProcessorFactory:
             return GreyscaleBinarySeparator(config)
             
         if processor_type == "Deskew":
-            return Deskew(config)
+            return Deskew(
+                enabled=config.get("enabled", True),
+                threshold=config.get("threshold", "40%"),
+                add_border=config.get("add_border", True),
+                border_size=config.get("border_size", "5x5"),
+                trim_borders=config.get("trim_borders", True),
+                fuzz_value=config.get("fuzz_value", "1%")
+            )
 
 
         raise ValueError("Processor invalid")
