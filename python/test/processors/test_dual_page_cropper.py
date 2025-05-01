@@ -1,7 +1,7 @@
 import unittest
 from unittest import TestCase
 from PIL import Image, ImageDraw
-from batch_image_processor.processors.image import DualPageCropper
+from batch_image_processor.processors.image.dual_page_cropper import DualPageCropper
 
 
 class TestDualPageCropper(TestCase):
@@ -15,44 +15,47 @@ class TestDualPageCropper(TestCase):
         draw.rectangle([110, 10, 190, 190], fill="red")  # Right rect
 
     def test_left_crop(self):
-        config = {
-            "left": {"x_start": 0, "y_start": 0},
-            "right": {"x_start": 100, "y_start": 0},
-            "image_size": {"width": 100, "height": 200},
-        }
-
-        cropper = DualPageCropper(config)
+        cropper = DualPageCropper(
+            left_left=0,
+            left_top=0,
+            right_left=100,
+            right_top=0,
+            width=100,
+            height=200
+        )
         cropped_left = cropper.process(self.img, True)
         self.assertEqual(
             cropped_left.getpixel((40, 100)), (0, 0, 255)
-        )  # Check for blue pixel in the middle
+        )
 
     def test_right_crop(self):
-        config = {
-            "left": {"x_start": 0, "y_start": 0},
-            "right": {"x_start": 100, "y_start": 0},
-            "image_size": {"width": 100, "height": 200},
-        }
-
-        cropper = DualPageCropper(config)
+        cropper = DualPageCropper(
+            left_left=0,
+            left_top=0,
+            right_left=100,
+            right_top=0,
+            width=100,
+            height=200
+        )
         cropped_right = cropper.process(self.img, False)
         self.assertEqual(
             cropped_right.getpixel((40, 100)), (255, 0, 0)
-        )  # Check for red pixel in the middle
+        )
 
     def test_toggle_back_to_left(self):
-        config = {
-            "left": {"x_start": 0, "y_start": 0},
-            "right": {"x_start": 100, "y_start": 0},
-            "image_size": {"width": 100, "height": 200},
-        }
-
-        cropper = DualPageCropper(config)
-        cropper.process(self.img, False)  # Crop right first
+        cropper = DualPageCropper(
+            left_left=0,
+            left_top=0,
+            right_left=100,
+            right_top=0,
+            width=100,
+            height=200
+        )
+        cropper.process(self.img, False)
         cropped_left_again = cropper.process(self.img, True)
         self.assertEqual(
             cropped_left_again.getpixel((40, 100)), (0, 0, 255)
-        )  # Check for blue pixel again
+        )
 
 
 if __name__ == "__main__":

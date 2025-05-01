@@ -29,7 +29,18 @@ class ImageProcessorFactory:
             return ImageRotator(config)
 
         if processor_type == "AutoPageCropper":
-            return DualPageCropper(config)
+            left = config.get("left", {})
+            right = config.get("right", {})
+            image_size = config.get("image_size", {})
+            
+            return DualPageCropper(
+                left_left=left.get("x_start") or left.get("left"),
+                left_top=left.get("y_start") or left.get("top"),
+                right_left=right.get("x_start") or right.get("left"),
+                right_top=right.get("y_start") or right.get("top"),
+                width=image_size.get("width"),
+                height=image_size.get("height")
+            )
 
         if processor_type == "ThresholdFilter":
             return ThresholdFilter(config)
