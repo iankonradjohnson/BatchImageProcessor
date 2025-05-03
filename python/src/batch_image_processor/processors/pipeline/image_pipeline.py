@@ -1,23 +1,90 @@
 import os.path
-from typing import List
+from typing import List, TypeVar, Generic, Protocol, runtime_checkable
 
 from PIL import Image, UnidentifiedImageError
 
-from batch_image_processor.processors.image.image_processor import ImageProcessor
+from batch_image_processor.processors.media_processor import MediaProcessor
 
 Image.MAX_IMAGE_PIXELS = None
 
+T = TypeVar('T')  # Generic type for the media being processed
+
+
+@runtime_checkable
+class MediaPipeline(Protocol[T]):
+    """
+    A protocol for media processing pipelines.
+    
+    This interface defines the methods required for media processing pipelines.
+    Implementations handle the workflow of loading media, applying a series of
+    processors, and saving the result. It is parameterized by the media type.
+    """
+    
+    def __init__(
+        self, processors: List[MediaProcessor[T]], input_dir: str, output_dir: str, deleted_dir: str = None
+    ):
+        """
+        Initialize the media pipeline.
+        
+        Args:
+            processors: List of media processors to apply
+            input_dir: Directory containing input files
+            output_dir: Directory to save processed files
+            deleted_dir: Directory to save filtered files (optional)
+        """
+        ...
+        
+    def process_and_save(self, filepath: str, copy_num: int = 1) -> None:
+        """
+        Process a media file and save the result.
+        
+        This method should be implemented to handle specific media types.
+        
+        Args:
+            filepath: Path to the media file relative to input_dir
+            copy_num: Copy number when making multiple variants
+        """
+        ...
+
 
 class ImagePipeline:
+    """
+    A pipeline for processing image files using PIL.
+    
+    This class implements the MediaPipeline protocol for PIL Image objects.
+    """
+    
     def __init__(
-        self, processors: List[ImageProcessor], input_dir, output_dir, deleted_dir
+        self, processors: List[MediaProcessor[Image.Image]], input_dir: str, output_dir: str, deleted_dir: str = None
     ):
+        """
+        Initialize the image pipeline.
+        
+        Args:
+            processors: List of image processors to apply
+            input_dir: Directory containing input images
+            output_dir: Directory to save processed images
+            deleted_dir: Directory to save filtered images (optional)
+        """
         self.processors = processors
         self.input_dir = input_dir
         self.output_dir = output_dir
         self.deleted_dir = deleted_dir
 
     def process_and_save_image(self, filepath: str, copy_num: int = 1) -> None:
+        """
+        Legacy method name for backward compatibility.
+        """
+        return self.process_and_save(filepath, copy_num)
+        
+    def process_and_save(self, filepath: str, copy_num: int = 1) -> None:
+        """
+        Process an image file and save the result.
+        
+        Args:
+            filepath: Path to the image file relative to input_dir
+            copy_num: Copy number when making multiple variants
+        """
         try:
             split = os.path.basename(filepath).split(".")
             basename, ext = ".".join(split[:-1]), split[-1]
@@ -49,7 +116,16 @@ class ImagePipeline:
         except UnidentifiedImageError as error:
             print(error)
 
-    def is_image(self, file_path):
+    def is_image(self, file_path: str) -> bool:
+        """
+        Check if a file is a valid image.
+        
+        Args:
+            file_path: Path to the file to check
+            
+        Returns:
+            True if the file is a valid image, False otherwise
+        """
         try:
             with Image.open(file_path) as img:
                 # Attempt to load the image to ensure it's valid

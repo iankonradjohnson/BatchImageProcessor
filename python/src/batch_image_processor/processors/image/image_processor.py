@@ -7,18 +7,22 @@ by derived classes to provide the actual image processing logic.
 """
 
 from PIL import Image
+from typing import Dict, Any, Optional
+
+from batch_image_processor.processors.media_processor import MediaProcessor
 
 
-class ImageProcessor:
+class ImageProcessor(MediaProcessor[Image.Image]):
     """
-    A base class for image processing operations.
+    A base class for image processing operations that extends MediaProcessor.
 
-    This class should be inherited by other classes intended for specific
-    image processing tasks. The derived classes should override the `process`
-    method to implement the desired image operation.
+    This class specializes MediaProcessor for PIL Image objects and should be 
+    inherited by classes that perform specific image processing tasks.
+    The derived classes should override the `process` method to implement
+    the desired image operation.
     """
 
-    def process(self, img: Image) -> Image:
+    def process(self, img: Image.Image) -> Image.Image:
         """
         Process the input image.
 
@@ -26,8 +30,10 @@ class ImageProcessor:
         specific image processing logic.
 
         Args:
-        - img (Image): The input image to be processed.
+            img: The input PIL image to be processed.
 
         Returns:
-        Image: The processed image.
+            The processed PIL image.
         """
+        # Default implementation for base class
+        return img

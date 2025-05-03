@@ -1,39 +1,91 @@
+"""
+A factory for creating batch processors.
+
+This module provides a factory pattern for creating batch processors
+based on configuration.
+"""
+
+from typing import Dict, Any, List, Type, TypeVar, Generic, ClassVar
+
+from PIL import Image
+
 from batch_image_processor.factory.image_processor_factory import ImageProcessorFactory
 from batch_image_processor.processors.batch.batch_processor import BatchProcessor
-from batch_image_processor.processors.single_page_processor import SinglePageProcessor
+from batch_image_processor.processors.media_processor import MediaProcessor
+from batch_image_processor.processors.pipeline.image_pipeline import ImagePipeline
 
 
 class BatchProcessorFactory:
-    @staticmethod
-    def create_processor_from_config(config) -> BatchProcessor:
+    """
+    Factory for creating batch processors for media files.
+    
+    This class provides static methods for creating batch processors
+    configured for different media types.
+    """
+    
+    @classmethod
+    def create_processor_from_config(cls, config: Dict[str, Any]) -> BatchProcessor:
+        """
+        Create a batch processor based on the provided configuration.
+        
+        Args:
+            config: Configuration dictionary with processor parameters.
+            
+        Returns:
+            A BatchProcessor instance configured for image processing.
+            
+        Raises:
+            ValueError: If the processor type is invalid or not supported.
+        """
         processor_type = config.get("type")
         input_dir = config["input_dir"]
         output_dir = config["output_dir"]
         deleted_dir = config.get("deleted_dir", None)
         copies = config.get("copies", 1)
 
+        # Create the media processors
         processors = [
             ImageProcessorFactory.create_processor(processor_config)
             for processor_config in config["processors"]
         ]
 
-        return BatchProcessorFactory.create_batch_processor(
+        # Create the batch processor
+        return cls.create_batch_processor(
             processor_type, input_dir, output_dir, processors, deleted_dir, copies
         )
-
-    @staticmethod
+    
+    @classmethod
     def create_batch_processor(
+        cls,
         processor_type: str,
         input_dir: str,
         output_dir: str,
-        processors: list,
+        processors: List[MediaProcessor],
         deleted_dir: str = None,
         copies: int = 1,
     ) -> BatchProcessor:
-        if processor_type == "SinglePage" or processor_type == "DualPage":
-            # For backward compatibility, treat DualPage as SinglePage now
-            return SinglePageProcessor(
-                input_dir, output_dir, processors, deleted_dir, copies
+        """
+        Create a batch processor based on the specified type.
+        
+        Args:
+            processor_type: Type of batch processor to create
+            input_dir: Directory containing input files
+            output_dir: Directory to save processed files
+            processors: List of media processors to apply
+            deleted_dir: Directory to save filtered files (optional)
+            copies: Number of copies to generate
+            
+        Returns:
+            A BatchProcessor instance.
+            
+        Raises:
+            ValueError: If the processor type is invalid or not supported.
+        """
+        # Handle SinglePage, DualPage (for backward compatibility), and ImageBatch
+        if processor_type in ("SinglePage", "DualPage", "ImageBatch"):
+            return BatchProcessor[Image.Image](
+                input_dir, output_dir, processors, deleted_dir, copies,
+                pipeline_class=ImagePipeline
             )
 
-        raise ValueError("Processor invalid")
+        raise ValueError(f"Invalid processor type: {processor_type}")
