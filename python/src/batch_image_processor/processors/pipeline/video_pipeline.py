@@ -1,7 +1,7 @@
 """
-A pipeline for processing video files using MoviePy.
+A pipeline for processing video files.
 
-This module provides a implementation of the MediaPipeline protocol for
+This module provides an implementation of the MediaPipeline protocol for
 processing video files through a series of video processors.
 """
 
@@ -9,21 +9,20 @@ import os.path
 from typing import List, Optional
 import logging
 
-from moviepy import VideoFileClip
-
 from batch_image_processor.processors.media_processor import MediaProcessor
 from batch_image_processor.processors.pipeline.image_pipeline import MediaPipeline
+from batch_image_processor.processors.video.video_clip import VideoClip, FFmpegVideoClip
 
 
-class VideoPipeline(MediaPipeline[VideoFileClip]):
+class VideoPipeline(MediaPipeline[VideoClip]):
     """
-    A pipeline for processing video files using MoviePy.
+    A pipeline for processing video files.
     
-    This class implements the MediaPipeline protocol for MoviePy VideoFileClip objects.
+    This class implements the MediaPipeline protocol for VideoClip objects.
     """
     
     def __init__(
-        self, processors: List[MediaProcessor[VideoFileClip]], input_dir: str, output_dir: str, deleted_dir: Optional[str] = None
+        self, processors: List[MediaProcessor[VideoClip]], input_dir: str, output_dir: str, deleted_dir: Optional[str] = None
     ):
         """
         Initialize the video pipeline.
@@ -62,7 +61,7 @@ class VideoPipeline(MediaPipeline[VideoFileClip]):
                 os.makedirs(self.deleted_dir, exist_ok=True)
 
             # Load the video
-            clip = VideoFileClip(video_path)
+            clip = FFmpegVideoClip.load(video_path)
             
             # Process the video through all processors
             for processor in self.processors:
@@ -73,12 +72,12 @@ class VideoPipeline(MediaPipeline[VideoFileClip]):
                 if clip is None:
                     if self.deleted_dir:
                         deleted_path = os.path.join(self.deleted_dir, os.path.basename(filepath))
-                        original_clip.write_videofile(deleted_path)
+                        original_clip.save(deleted_path)
                     original_clip.close()
                     return
             
             # Save the processed video
-            clip.write_videofile(save_path)
+            clip.save(save_path)
             clip.close()
             
         except Exception as e:
@@ -95,7 +94,7 @@ class VideoPipeline(MediaPipeline[VideoFileClip]):
             True if the file is a valid video, False otherwise
         """
         try:
-            clip = VideoFileClip(file_path)
+            clip = FFmpegVideoClip.load(file_path)
             valid = clip.duration > 0
             clip.close()
             return valid

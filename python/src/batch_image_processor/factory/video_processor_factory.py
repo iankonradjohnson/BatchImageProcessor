@@ -1,25 +1,25 @@
 """
 A concrete factory implementation for creating video processors.
 
-This module implements the MediaProcessorFactory abstract class for MoviePy VideoFileClip
+This module implements the MediaProcessorFactory abstract class for VideoClip
 processors. It provides a registry-based approach to creating VideoProcessor
 instances based on configuration.
 """
 
 from typing import Dict, Any, Type
-from moviepy import VideoFileClip
 
 from batch_image_processor.factory.media_processor_factory import MediaProcessorFactory
+from batch_image_processor.processors.video.video_clip import VideoClip
 from batch_image_processor.processors.video.video_processor import VideoProcessor
 from batch_image_processor.processors.video.video_rotator import VideoRotator
 
 
-class VideoProcessorFactory(MediaProcessorFactory[VideoFileClip]):
+class VideoProcessorFactory(MediaProcessorFactory[VideoClip]):
     """
     Factory for creating video processors.
     
     This factory implements the MediaProcessorFactory abstract class
-    for MoviePy VideoFileClip processors. It maintains a registry of processor types
+    for VideoClip processors. It maintains a registry of processor types
     and their corresponding classes.
     """
     

@@ -12,6 +12,7 @@ from unittest.mock import MagicMock, patch
 
 from batch_image_processor.processors.pipeline.video_pipeline import VideoPipeline
 from batch_image_processor.processors.video.video_processor import VideoProcessor
+from batch_image_processor.processors.video.video_clip import VideoClip
 
 
 class TestVideoPipeline(unittest.TestCase):
@@ -54,12 +55,12 @@ class TestVideoPipeline(unittest.TestCase):
         # Remove temporary directory
         shutil.rmtree(self.temp_dir)
 
-    @patch('batch_image_processor.processors.pipeline.video_pipeline.VideoFileClip')
-    def test_process_and_save(self, mock_video_clip_class):
+    @patch('batch_image_processor.processors.video.video_clip.FFmpegVideoClip.load')
+    def test_process_and_save(self, mock_video_clip_load):
         """Test processing and saving a video."""
-        # Create a mock VideoFileClip
-        mock_clip = MagicMock()
-        mock_video_clip_class.return_value = mock_clip
+        # Create a mock VideoClip
+        mock_clip = MagicMock(spec=VideoClip)
+        mock_video_clip_load.return_value = mock_clip
         
         # Setup processor behavior - both processors return the clip unchanged
         self.mock_processor1.process.return_value = mock_clip
@@ -68,23 +69,23 @@ class TestVideoPipeline(unittest.TestCase):
         # Process the video
         self.pipeline.process_and_save(self.test_filepath)
         
-        # Check if VideoFileClip was created with correct path
-        mock_video_clip_class.assert_called_once_with(self.test_video_path)
+        # Check if FFmpegVideoClip.load was called with correct path
+        mock_video_clip_load.assert_called_once_with(self.test_video_path)
         
         # Check if each processor was called
         self.mock_processor1.process.assert_called_once_with(mock_clip)
         self.mock_processor2.process.assert_called_once_with(mock_clip)
         
         # Check if the output video was saved
-        mock_clip.write_videofile.assert_called_once()
+        mock_clip.save.assert_called_once()
         mock_clip.close.assert_called_once()
         
-    @patch('batch_image_processor.processors.pipeline.video_pipeline.VideoFileClip')
-    def test_filtered_video(self, mock_video_clip_class):
+    @patch('batch_image_processor.processors.video.video_clip.FFmpegVideoClip.load')
+    def test_filtered_video(self, mock_video_clip_load):
         """Test processing a video that gets filtered out."""
-        # Create a mock VideoFileClip
-        mock_clip = MagicMock()
-        mock_video_clip_class.return_value = mock_clip
+        # Create a mock VideoClip
+        mock_clip = MagicMock(spec=VideoClip)
+        mock_video_clip_load.return_value = mock_clip
         
         # Setup processor behavior - first processor returns None (filtering)
         self.mock_processor1.process.return_value = None
@@ -101,13 +102,13 @@ class TestVideoPipeline(unittest.TestCase):
         # Check if the clip was closed
         mock_clip.close.assert_called_once()
     
-    @patch('batch_image_processor.processors.pipeline.video_pipeline.VideoFileClip')    
-    def test_is_video(self, mock_video_clip_class):
+    @patch('batch_image_processor.processors.video.video_clip.FFmpegVideoClip.load')    
+    def test_is_video(self, mock_video_clip_load):
         """Test checking if a file is a valid video."""
-        # Create a mock VideoFileClip with valid duration
-        mock_clip = MagicMock()
+        # Create a mock VideoClip with valid duration
+        mock_clip = MagicMock(spec=VideoClip)
         mock_clip.duration = 10  # Valid duration
-        mock_video_clip_class.return_value = mock_clip
+        mock_video_clip_load.return_value = mock_clip
         
         # Check if it's a valid video
         result = self.pipeline.is_video(self.test_video_path)

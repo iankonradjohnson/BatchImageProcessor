@@ -2,8 +2,7 @@
 
 from typing import Literal
 
-from moviepy import VideoFileClip
-
+from batch_image_processor.processors.video.video_clip import VideoClip
 from batch_image_processor.processors.video.video_processor import VideoProcessor
 
 
@@ -19,22 +18,19 @@ class VideoRotator(VideoProcessor):
         self.rotation_direction = rotation_direction
         self.target_orientation = target_orientation
     
-    def process(self, clip: VideoFileClip) -> VideoFileClip:
+    def process(self, clip: VideoClip) -> VideoClip:
         """Process the video clip by rotating it."""
-        width = clip.w
-        height = clip.h
+        width = clip.width
+        height = clip.height
         
         # Add debugging to see what's happening with the dimensions
-        print(f"Original clip dimensions: w={width}, h={height}")
-        
-        # Check size attribute if it exists
-        if hasattr(clip, 'size'):
-            print(f"Clip size attribute: {clip.size}")
+        print(f"Original clip dimensions: width={width}, height={height}")
         
         # Check for rotation metadata
         print(f"Clip has rotation metadata: {clip.rotation}")
         
-        is_horizontal = width > height
+        # Use the built-in is_horizontal property which considers rotation metadata
+        is_horizontal = clip.is_horizontal
         print(f"Is horizontal: {is_horizontal}")
         
         # If already in target orientation, don't rotate
@@ -45,9 +41,9 @@ class VideoRotator(VideoProcessor):
         
         print(f"Rotating video with angle {-90 if self.rotation_direction == 'left' else 90}")
         rotation_angle = -90 if self.rotation_direction == "left" else 90
-        rotated_clip = clip.rotated(rotation_angle, expand=True)
+        rotated_clip = clip.rotate(rotation_angle)
         
         # Check dimensions after rotation
-        print(f"After rotation: w={rotated_clip.w}, h={rotated_clip.h}")
+        print(f"After rotation: width={rotated_clip.width}, height={rotated_clip.height}")
         
         return rotated_clip

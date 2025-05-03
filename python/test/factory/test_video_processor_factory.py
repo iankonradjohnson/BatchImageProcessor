@@ -8,10 +8,9 @@ import unittest
 from unittest.mock import MagicMock, patch
 from typing import Dict, Any
 
-from moviepy import VideoFileClip
-
 from batch_image_processor.factory.video_processor_factory import VideoProcessorFactory
 from batch_image_processor.processors.video.video_processor import VideoProcessor
+from batch_image_processor.processors.video.video_clip import VideoClip
 
 
 # Create a mock video processor for testing
@@ -19,7 +18,7 @@ class MockVideoProcessor(VideoProcessor):
     def __init__(self, **kwargs):
         self.config = kwargs
         
-    def process(self, clip: VideoFileClip) -> VideoFileClip:
+    def process(self, clip: VideoClip) -> VideoClip:
         return clip
 
 

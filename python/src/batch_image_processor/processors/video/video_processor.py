@@ -2,15 +2,14 @@
 Base class for video processors.
 
 This module defines the VideoProcessor base class that implements the MediaProcessor
-interface for video processing operations using MoviePy.
+interface for video processing operations using the VideoClip interface.
 """
 
-from moviepy import VideoFileClip
-
 from batch_image_processor.processors.media_processor import MediaProcessor
+from batch_image_processor.processors.video.video_clip import VideoClip
 
 
-class VideoProcessor(MediaProcessor[VideoFileClip]):
+class VideoProcessor(MediaProcessor[VideoClip]):
     """
     Base class for video processors.
     
@@ -19,7 +18,7 @@ class VideoProcessor(MediaProcessor[VideoFileClip]):
     specific video processing algorithms.
     """
     
-    def process(self, clip: VideoFileClip) -> VideoFileClip:
+    def process(self, clip: VideoClip) -> VideoClip:
         """
         Process the video clip.
         
