@@ -33,12 +33,12 @@ class TestBookProcessor(TestCase):
         # Then
         expected_calls = [
             mock.call(
-                self.processor._process_single_image,
+                self.processor._process_single_file,
                 args=("image1.jpg", 0),
                 callback=mock.ANY,
             ),
             mock.call(
-                self.processor._process_single_image,
+                self.processor._process_single_file,
                 args=("image2.jpg", 0),
                 callback=mock.ANY,
             ),

@@ -34,7 +34,7 @@ class MediaPipeline(Protocol[T]):
         """
         ...
         
-    def process_and_save(self, filepath: str, copy_num: int = 1) -> None:
+    def process_and_save(self, filepath: str) -> None:
         """
         Process a media file and save the result.
         
@@ -42,7 +42,6 @@ class MediaPipeline(Protocol[T]):
         
         Args:
             filepath: Path to the media file relative to input_dir
-            copy_num: Copy number when making multiple variants
         """
         ...
 
@@ -71,19 +70,12 @@ class ImagePipeline:
         self.output_dir = output_dir
         self.deleted_dir = deleted_dir
 
-    def process_and_save_image(self, filepath: str, copy_num: int = 1) -> None:
-        """
-        Legacy method name for backward compatibility.
-        """
-        return self.process_and_save(filepath, copy_num)
-        
-    def process_and_save(self, filepath: str, copy_num: int = 1) -> None:
+    def process_and_save(self, filepath: str) -> None:
         """
         Process an image file and save the result.
         
         Args:
             filepath: Path to the image file relative to input_dir
-            copy_num: Copy number when making multiple variants
         """
         try:
             split = os.path.basename(filepath).split(".")

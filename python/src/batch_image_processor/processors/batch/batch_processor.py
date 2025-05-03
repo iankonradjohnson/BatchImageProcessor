@@ -43,7 +43,6 @@ class BatchProcessor(Generic[T]):
         self.output_dir = output_dir
         self.processors = processors
         self.deleted_dir = deleted_dir
-        self.copies = copies
         self.pipeline_class = pipeline_class
         self.filename_li = self._get_files_from_input_dir()
 
@@ -52,16 +51,15 @@ class BatchProcessor(Generic[T]):
         Process all files in the input directory in parallel.
         """
         pbar = tqdm(
-            total=len(self.filename_li * self.copies), unit="file", desc="Processing"
+            total=len(self.filename_li), unit="file", desc="Processing"
         )
         pool = Pool(cpu_count())
         for filename in self.filename_li:
-            for copy_num in range(self.copies):
-                pool.apply_async(
-                    self._process_single_file, 
-                    args=(filename, copy_num), 
-                    callback=lambda arg: pbar.update(1)
-                )
+            pool.apply_async(
+                self._process_single_file,
+                args=(filename,),
+                callback=lambda arg: pbar.update(1)
+            )
         pool.close()
         pool.join()
         pbar.close()
@@ -80,37 +78,16 @@ class BatchProcessor(Generic[T]):
                     file_list.append(os.path.join(folder_name, filename))
         return file_list
 
-    def _create_pipeline(self) -> MediaPipeline[T]:
-        """
-        Create a media pipeline for processing.
-        
-        Returns:
-            A MediaPipeline instance configured with the processors.
-        """
-        if self.pipeline_class is None:
-            raise ValueError("No pipeline class specified")
-        return self.pipeline_class(
-            self.processors, self.input_dir, self.output_dir, self.deleted_dir
-        )
-
-    def _process_single_file(self, filepath: str, copy_num: int = None) -> None:
+    def _process_single_file(self, filepath: str) -> None:
         """
         Process a single file using the media pipeline.
         
         Args:
             filepath: Path to the file relative to input_dir
-            copy_num: Copy number when making multiple variants
         """
         try:
-            pipeline = self._create_pipeline()
-            pipeline.process_and_save(filepath, copy_num)
+            pipeline = self.pipeline_class(self.processors, self.input_dir, self.output_dir, self.deleted_dir)
+            pipeline.process_and_save(filepath)
         except Exception as exception:
             print(exception)
             print(traceback.format_exc())
-    
-    # Legacy method for backward compatibility
-    def _process_single_image(self, filepath: str, copy_num: int = None) -> None:
-        """
-        Legacy method name for backward compatibility.
-        """
-        return self._process_single_file(filepath, copy_num)

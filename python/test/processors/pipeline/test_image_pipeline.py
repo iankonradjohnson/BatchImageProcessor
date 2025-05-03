@@ -29,7 +29,7 @@ class TestImagePipeline(unittest.TestCase):
             [self.mock_processor], self.input_dir, self.save_dir, self.deleted_dir
         )
 
-        pipeline.process_and_save_image(self.mock_img_filename)
+        pipeline.process_and_save(self.mock_img_filename)
 
         mock_open.assert_called_once_with(f"{self.input_dir}/{self.mock_img_filename}")
         self.mock_processor.process.assert_called_once_with(self.test_image)
@@ -45,7 +45,7 @@ class TestImagePipeline(unittest.TestCase):
             [self.mock_processor], self.input_dir, self.save_dir, self.deleted_dir
         )
 
-        pipeline.process_and_save_image(self.mock_img_filename)
+        pipeline.process_and_save(self.mock_img_filename)
 
         self.mock_processor.process.assert_not_called()
 
@@ -62,7 +62,7 @@ class TestImagePipeline(unittest.TestCase):
             [self.mock_processor], self.input_dir, self.save_dir, None
         )  # No deleted_dir
 
-        pipeline.process_and_save_image(self.mock_img_filename)
+        pipeline.process_and_save(self.mock_img_filename)
 
         # Check that save to output directory was not called
         self.assertEqual(self.test_image.save.call_count, 0)
