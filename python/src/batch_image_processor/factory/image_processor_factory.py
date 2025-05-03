@@ -1,3 +1,4 @@
+from batch_image_processor.processors.image.border_processor import BorderProcessor
 from batch_image_processor.processors.image.brightness_contrast import BrightnessContrast
 from batch_image_processor.processors.image.color_balance import ColorBalance
 from batch_image_processor.processors.image.color_inverter import ColorInverter
@@ -43,7 +44,11 @@ class ImageProcessorFactory:
             )
 
         if processor_type == "ThresholdFilter":
-            return ThresholdFilter(config)
+            return ThresholdFilter(
+                min_thresh=config.get("min_thresh", 0),
+                max_thresh=config.get("max_thresh", 255),
+                blank_dir=config.get("deleted_dir")
+            )
 
         if processor_type == "ImageAugmentor":
             return ImageAugmentor(config)
@@ -52,7 +57,9 @@ class ImageProcessorFactory:
             return ResizeProcessor(config)
 
         if processor_type == "Threshold":
-            return ThresholdProcessor(config)
+            return ThresholdProcessor(
+                threshold_value=config.get("threshold_value", 128)
+            )
 
         if processor_type == "GaussianBlur":
             return GaussianBlur(config)
@@ -98,6 +105,14 @@ class ImageProcessorFactory:
                 border_size=config.get("border_size", "5x5"),
                 trim_borders=config.get("trim_borders", True),
                 fuzz_value=config.get("fuzz_value", "1%")
+            )
+            
+        if processor_type == "BorderProcessor":
+            return BorderProcessor(
+                top=config.get("top", 0),
+                bottom=config.get("bottom", 0),
+                left=config.get("left", 0),
+                right=config.get("right", 0)
             )
 
 
