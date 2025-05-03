@@ -22,38 +22,7 @@ class BatchProcessorFactory:
     This class provides static methods for creating batch processors
     configured for different media types.
     """
-    
-    @classmethod
-    def create_processor_from_config(cls, config: Dict[str, Any]) -> BatchProcessor:
-        """
-        Create a batch processor based on the provided configuration.
-        
-        Args:
-            config: Configuration dictionary with processor parameters.
-            
-        Returns:
-            A BatchProcessor instance configured for image processing.
-            
-        Raises:
-            ValueError: If the processor type is invalid or not supported.
-        """
-        processor_type = config.get("type")
-        input_dir = config["input_dir"]
-        output_dir = config["output_dir"]
-        deleted_dir = config.get("deleted_dir", None)
-        copies = config.get("copies", 1)
 
-        # Create the media processors
-        processors = [
-            ImageProcessorFactory.create_processor(processor_config)
-            for processor_config in config["processors"]
-        ]
-
-        # Create the batch processor
-        return cls.create_batch_processor(
-            processor_type, input_dir, output_dir, processors, deleted_dir, copies
-        )
-    
     @classmethod
     def create_batch_processor(
         cls,
