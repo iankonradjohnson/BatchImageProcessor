@@ -8,15 +8,9 @@ class ImageRotator(ImageProcessor):
         self.left = config.get("left")
         self.right = config.get("right")
 
-    def process(self, img: Image, is_left: bool = None) -> Image:
-        # Toggle between left and right for the next process
-        if is_left is None:
-            curr_page = self.config
-        elif is_left:
-            curr_page = self.left
-        else:
-            curr_page = self.right
-
-        angle = curr_page["angle"]
+    def process(self, img: Image) -> Image:
+        # Use the config directly now that we don't have left/right pages
+        curr_page = self.config
+        angle = curr_page.get("angle", 0)
 
         return img.rotate(angle, resample=Image.Resampling.BICUBIC, expand=True)

@@ -13,15 +13,13 @@ class DpiMetadata(ImageProcessor):
         """
         self.dpi = config.get("dpi", 300)
 
-    def process(self, img: Image, is_left: bool = None) -> Image:
+    def process(self, img: Image) -> Image:
         """
         Updates the DPI metadata of an image without resizing its pixels.
 
         Args:
         - img (Image): The input PIL image.
-        - is_left (bool, optional): Unused, but kept for API consistency.
-
-        Returns:
+        - Returns:
         - Image: Image with updated DPI metadata.
         """
         img.info["dpi"] = (self.dpi, self.dpi)  # Set DPI metadata

@@ -7,5 +7,5 @@ class Greyscale(ImageProcessor):
     def __init__(self, config):
         self.config = config
 
-    def process(self, img: Image, is_left: bool = None) -> Image:
+    def process(self, img: Image) -> Image:
         return img.convert("L")

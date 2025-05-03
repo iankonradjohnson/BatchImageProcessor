@@ -26,15 +26,13 @@ class LevelsAdjustment(ImageProcessor):
         if self.gamma <= 0:
             raise ValueError("gamma must be greater than 0.")
 
-    def process(self, img: Image, is_left: bool = None) -> Image:
+    def process(self, img: Image) -> Image:
         """
         Adjusts the levels of an image like Photoshop's Levels tool.
 
         Args:
         - img (Image): The input PIL image.
-        - is_left (bool, optional): Unused, but kept for API consistency.
-
-        Returns:
+        - Returns:
         - Image: Processed image with Levels applied.
         """
         img = img.convert("RGB")  # Ensure image is in RGB mode

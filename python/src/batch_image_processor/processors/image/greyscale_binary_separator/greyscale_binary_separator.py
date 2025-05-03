@@ -54,13 +54,12 @@ class GreyscaleBinarySeparator(ImageProcessor):
         self.save_visualization = self.config.get("save_visualization", False)
         self.visualization_path = self.config.get("visualization_path", ".")
 
-    def process(self, img: Image, is_left: bool = None) -> Image:
+    def process(self, img: Image) -> Image:
         """
         Process an image, detecting and separately processing grayscale and binary regions.
 
         Args:
             img: The input PIL image to process.
-            is_left: Flag indicating if this is a left page (not used in this processor).
 
         Returns:
             The processed PIL image.

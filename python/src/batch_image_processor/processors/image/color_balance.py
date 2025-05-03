@@ -8,7 +8,7 @@ class ColorBalance(ImageProcessor):
         self.green_balance = config.get("green", 1.0)
         self.blue_balance = config.get("blue", 1.0)
 
-    def process(self, img: Image, is_left: bool = None) -> Image:
+    def process(self, img: Image) -> Image:
         img = img.convert("RGB")
 
         r, g, b = img.split()

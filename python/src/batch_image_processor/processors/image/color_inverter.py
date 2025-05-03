@@ -6,7 +6,7 @@ class ColorInverter(ImageProcessor):
     def __init__(self, config):
         self.config = config
 
-    def process(self, img: Image, is_left: bool = None) -> Image:
+    def process(self, img: Image) -> Image:
         # Check the image mode and convert if necessary
         if img.mode not in ["L", "RGB"]:
             # Convert to RGB mode before inverting

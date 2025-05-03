@@ -19,7 +19,7 @@ class PageCropper(ImageProcessor):
         self.coverage_ratio = coverage_ratio
         self.debug = debug
 
-    def process(self, img: Image, is_left: Optional[bool] = None) -> Image:
+    def process(self, img: Image) -> Image:
         cv_img = cv.cvtColor(np.array(img), cv.COLOR_RGB2BGR)
         cropped = self._detect_and_crop(cv_img)
 

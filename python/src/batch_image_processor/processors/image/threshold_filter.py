@@ -14,7 +14,7 @@ class ThresholdFilter(ImageProcessor):
         self.max_thresh = max_thresh
         self.blank_dir = blank_dir
 
-    def process(self, img: Image, is_left: bool = None) -> Image:
+    def process(self, img: Image) -> Image:
         img_cv2 = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR)
         _, binary_image = cv2.threshold(img_cv2, 128, 255, cv2.THRESH_BINARY)
         average_threshold = cv2.mean(binary_image)[0]

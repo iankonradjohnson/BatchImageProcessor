@@ -8,7 +8,7 @@ class MoireProcessor(ImageProcessor):
     def __init__(self, config):
         self.config = config
 
-    def process(self, img: Image, is_left: bool = None) -> Image:
+    def process(self, img: Image) -> Image:
         img = img.convert("RGBA")
         screen = self.create_screen(img.width, img.height)
         return Image.blend(img, screen, 0.25)

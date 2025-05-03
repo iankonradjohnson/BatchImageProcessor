@@ -7,7 +7,7 @@ class RedBlueChannelSwap(ImageProcessor):
     def __init__(self, config=None):
         self.config = config
 
-    def process(self, img: Image, is_left: bool = None) -> Image:
+    def process(self, img: Image) -> Image:
         img = img.convert("RGB")
         r, g, b = img.split()
         return Image.merge("RGB", (b, g, r))

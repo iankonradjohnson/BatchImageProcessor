@@ -33,15 +33,13 @@ class BorderProcessor(ImageProcessor):
         self.left = left
         self.right = right
 
-    def process(self, img: Image, is_left: bool = None) -> Image:
+    def process(self, img: Image) -> Image:
         """
         Fill border pixels with white.
 
         Args:
             img (Image): The input image.
-            is_left (bool, optional): Unused parameter for compatibility with the base class.
-
-        Returns:
+            Returns:
             Image: The image with border pixels filled with white.
         """
         # Create a copy of the image to avoid modifying the original

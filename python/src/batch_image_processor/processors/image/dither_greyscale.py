@@ -13,15 +13,13 @@ class DitherGreyscale(ImageProcessor):
         """
         self.dither_type = config.get("dither_type", "floyd-steinberg").lower()
 
-    def process(self, img: Image, is_left: bool = None) -> Image:
+    def process(self, img: Image) -> Image:
         """
         Converts an image to greyscale and applies dithering based on the selected type.
 
         Args:
         - img (Image): The input PIL image.
-        - is_left (bool, optional): Unused, but kept for API consistency.
-
-        Returns:
+        - Returns:
         - Image: Processed image with dithering applied.
         """
         img = img.convert("L")  # Convert to greyscale

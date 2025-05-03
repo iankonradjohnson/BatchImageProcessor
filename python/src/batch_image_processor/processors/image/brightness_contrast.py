@@ -15,15 +15,13 @@ class BrightnessContrast(ImageProcessor):
         self.brightness = config.get("brightness", 1.0)
         self.contrast = config.get("contrast", 1.0)
 
-    def process(self, img: Image, is_left: bool = None) -> Image:
+    def process(self, img: Image) -> Image:
         """
         Adjusts brightness and contrast of the image.
 
         Args:
         - img (Image): The input PIL image.
-        - is_left (bool, optional): Unused, but kept for API consistency.
-
-        Returns:
+        - Returns:
         - Image: Adjusted image with brightness and contrast applied.
         """
         # Apply brightness adjustment

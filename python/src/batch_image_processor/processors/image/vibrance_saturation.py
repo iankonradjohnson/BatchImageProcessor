@@ -9,7 +9,7 @@ class VibranceSaturation(ImageProcessor):
         self.vibrance = config.get("vibrance", 1.0)
         self.saturation = config.get("saturation", 1.0)
 
-    def process(self, img: Image, is_left: bool = None) -> Image:
+    def process(self, img: Image) -> Image:
         img = img.convert("RGB")
         img = ImageEnhance.Color(img).enhance(self.saturation)
         img_np = np.array(img)

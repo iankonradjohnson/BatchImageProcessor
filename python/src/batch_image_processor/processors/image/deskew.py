@@ -32,7 +32,7 @@ class Deskew(ImageProcessor):
         self.trim_borders = trim_borders
         self.fuzz_value = fuzz_value
 
-    def process(self, img: Image.Image, is_left: bool = None) -> Image.Image:
+    def process(self, img: Image) -> Image.Image:
         """
         Process the input image by deskewing it.
 
@@ -41,9 +41,7 @@ class Deskew(ImageProcessor):
 
         Args:
             img (Image.Image): The input image to be deskewed.
-            is_left (bool, optional): Indicates if the image is the left page. Not used in deskew.
-
-        Returns:
+            Returns:
             Image.Image: The deskewed image.
         """
         if not self.enabled:

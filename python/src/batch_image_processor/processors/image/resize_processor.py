@@ -19,7 +19,7 @@ class ResizeProcessor(ImageProcessor):
             self.resampling_method, Image.BILINEAR
         )
 
-    def process(self, img: Image, is_left: bool = None) -> Image:
+    def process(self, img: Image) -> Image:
         resize_factor = random.uniform(self.resize_range[0], self.resize_range[1])
         new_width = int(img.width * resize_factor)
         new_height = int(img.height * resize_factor)

@@ -23,7 +23,7 @@ class TestThresholdFilter(unittest.TestCase):
         "cv2.mean", return_value=(100, 0, 0, 0)
     )  # Mock to return an average within the range
     def test_process_within_threshold(self, mock_mean):
-        result = self.filter.process(self.test_image, True)
+        result = self.filter.process(self.test_image)
         self.assertIsNotNone(result)
 
     @patch(
@@ -32,7 +32,7 @@ class TestThresholdFilter(unittest.TestCase):
     @patch("os.path.exists", return_value=False)
     @patch("os.mkdir")
     def test_process_below_threshold(self, mock_mkdir, mock_exists, mock_mean):
-        result = self.filter.process(self.test_image, True)
+        result = self.filter.process(self.test_image)
         self.assertIsNone(result)
         self.test_image.save.assert_called_with(self.save_path)
 
@@ -42,7 +42,7 @@ class TestThresholdFilter(unittest.TestCase):
     @patch("os.path.exists", return_value=False)
     @patch("os.mkdir")
     def test_process_above_threshold(self, mock_mkdir, mock_exists, mock_mean):
-        result = self.filter.process(self.test_image, True)
+        result = self.filter.process(self.test_image)
         self.assertIsNone(result)
         self.test_image.save.assert_called_with(self.save_path)
 
