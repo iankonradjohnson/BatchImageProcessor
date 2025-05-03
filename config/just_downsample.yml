@@ -1,7 +1,7 @@
 directories:
   - input_dir: "/Users/iankonradjohnson/Library/CloudStorage/GoogleDrive-iankonradjohnson@gmail.com/My Drive/base/abacus/SocialMedia/Posts/TerraCotta/Post1/good"
     output_dir: "/Users/iankonradjohnson/Library/CloudStorage/GoogleDrive-iankonradjohnson@gmail.com/My Drive/base/abacus/SocialMedia/Posts/TerraCotta/Post1/good-downsampled"
-    type: "SinglePage"
+    type: "Image"
     processors:
       - type: "Resize"
         resize_range: [0.25, 0.25]

@@ -1,7 +1,7 @@
 directories:
   - input_dir: "/Users/iankonradjohnson/base/abacus/data/archive-images/sub"
     output_dir: "/Users/iankonradjohnson/base/abacus/data/archive-images/aug"
-    type: "SinglePage"
+    type: "Image"
     copies: 8
     processors:
       - type: "ImageAugmentor"

@@ -2,7 +2,7 @@ directories:
 
   - input_dir: "/Users/iankonradjohnson/base/abacus/data/archive-images/raw"
     output_dir: "/Users/iankonradjohnson/base/abacus/data/archive-images/moire/erased_75_size_15-20_freq"
-    type: "SinglePage"
+    type: "Image"
     processors:
       - type: "Resize"
         resize_range: [ .75, .75 ]
@@ -13,7 +13,7 @@ directories:
 
   - input_dir: "/Users/iankonradjohnson/base/abacus/data/archive-images/raw"
     output_dir: "/Users/iankonradjohnson/base/abacus/data/archive-images/moire/erased_75_size_20_freq"
-    type: "SinglePage"
+    type: "Image"
     processors:
       - type: "Resize"
         resize_range: [.75, .75]
@@ -24,7 +24,7 @@ directories:
 
   - input_dir: "/Users/iankonradjohnson/base/abacus/data/archive-images/raw"
     output_dir: "/Users/iankonradjohnson/base/abacus/data/archive-images/moire/normal_75_size_15-20_freq"
-    type: "SinglePage"
+    type: "Image"
     processors:
       - type: "Resize"
         resize_range: [ .75, .75 ]
@@ -35,7 +35,7 @@ directories:
 
   - input_dir: "/Users/iankonradjohnson/base/abacus/data/archive-images/raw"
     output_dir: "/Users/iankonradjohnson/base/abacus/data/archive-images/moire/normal_75_size_20_freq"
-    type: "SinglePage"
+    type: "Image"
     processors:
       - type: "Resize"
         resize_range: [.75, .75]
@@ -47,7 +47,7 @@ directories:
   # Resize to 75 for ground truth
   - input_dir: "/Users/iankonradjohnson/base/abacus/data/archive-images/raw"
     output_dir: "/Users/iankonradjohnson/base/abacus/data/archive-images/moire/75_resize"
-    type: "SinglePage"
+    type: "Image"
     processors:
       - type: "Resize"
         resize_range: [ .75, .75 ]

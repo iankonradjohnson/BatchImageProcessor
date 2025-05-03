@@ -2,7 +2,7 @@ directories:
   - input_dir: "/Users/iankonradjohnson/base/abacus/BookProjects/TheGeorgianPeriod/Volume2-4/1_png"
     output_dir: "/Users/iankonradjohnson/base/abacus/BookProjects/TheGeorgianPeriod/Volume2-4/2_filtered"
     deleted_dir: "/Users/iankonradjohnson/base/abacus/BookProjects/TheGeorgianPeriod/Volume2-4/2_blank"
-    type: "SinglePage"
+    type: "Image"
     processors:
       - type: "ThresholdFilter"
         min_thresh: 0

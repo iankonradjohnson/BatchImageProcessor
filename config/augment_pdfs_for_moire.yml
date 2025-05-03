@@ -1,7 +1,7 @@
 directories:
   - input_dir: "/Users/iankonradjohnson/base/abacus/data/archive-pdfs/moire_candidates"
     output_dir: "/Users/iankonradjohnson/base/abacus/data/archive-pdfs/moire/augmented"
-    type: "SinglePage"
+    type: "Image"
     copies: 3
     processors:
       - type: "Resize"

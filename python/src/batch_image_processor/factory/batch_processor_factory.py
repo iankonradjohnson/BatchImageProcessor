@@ -82,7 +82,7 @@ class BatchProcessorFactory:
             ValueError: If the processor type is invalid or not supported.
         """
         # Handle SinglePage, DualPage (for backward compatibility), and ImageBatch
-        if processor_type in ("SinglePage", "DualPage", "ImageBatch"):
+        if processor_type in ("Image"):
             return BatchProcessor[Image.Image](
                 input_dir, output_dir, processors, deleted_dir, copies,
                 pipeline_class=ImagePipeline

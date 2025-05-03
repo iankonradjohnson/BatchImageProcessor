@@ -1,7 +1,7 @@
 directories:
   - input_dir: "/Users/iankonradjohnson/base/abacus/BookProjects/The_terra-cotta_architecture_of_North_Italy/upscaled/color-images"
     output_dir: "/Users/iankonradjohnson/base/abacus/BookProjects/The_terra-cotta_architecture_of_North_Italy/upscaled-downsampled/color-images"
-    type: "SinglePage"
+    type: "Image"
     processors:
       - type: "Resize"
         resize_range: [0.4, 0.4]

@@ -1,7 +1,7 @@
 directories:
   - input_dir: "/Users/iankonradjohnson/Downloads/test/in"
     output_dir: "/Users/iankonradjohnson/Downloads/test/out"
-    type: "SinglePage"
+    type: "Image"
     processors:
       - type: "GreyscaleBinarySeparator"
         # Detection configuration
