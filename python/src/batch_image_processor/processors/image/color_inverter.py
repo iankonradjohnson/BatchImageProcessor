@@ -8,9 +8,9 @@ class ColorInverter(ImageProcessor):
 
     def process(self, img: Image, is_left: bool = None) -> Image:
         # Check the image mode and convert if necessary
-        if img.mode not in ['L', 'RGB']:
+        if img.mode not in ["L", "RGB"]:
             # Convert to RGB mode before inverting
-            img = img.convert('RGB')
+            img = img.convert("RGB")
 
         # Invert the colors of the image
         try:

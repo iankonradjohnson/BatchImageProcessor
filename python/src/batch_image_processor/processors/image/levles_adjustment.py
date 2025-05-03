@@ -20,7 +20,9 @@ class LevelsAdjustment(ImageProcessor):
 
         # Ensure valid input ranges
         if not (0 <= self.black_point < self.white_point <= 255):
-            raise ValueError("black_point must be < white_point, and both must be between 0-255.")
+            raise ValueError(
+                "black_point must be < white_point, and both must be between 0-255."
+            )
         if self.gamma <= 0:
             raise ValueError("gamma must be greater than 0.")
 
@@ -39,7 +41,9 @@ class LevelsAdjustment(ImageProcessor):
         img_array = np.array(img, dtype=np.float32)
 
         # Normalize pixel values between 0 and 1
-        img_array = (img_array - self.black_point) / (self.white_point - self.black_point)
+        img_array = (img_array - self.black_point) / (
+            self.white_point - self.black_point
+        )
         img_array = np.clip(img_array, 0, 1)  # Clip to valid range
 
         # Apply gamma correction

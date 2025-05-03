@@ -9,10 +9,10 @@ from .edge_detection import EdgeDetectionStrategy
 from .detection_provider import DetectionStrategyProvider
 
 __all__ = [
-    'DetectionStrategy',
-    'BaseDetectionStrategy',
-    'HistogramAnalysisStrategy',
-    'TextureAnalysisStrategy',
-    'EdgeDetectionStrategy',
-    'DetectionStrategyProvider'
+    "DetectionStrategy",
+    "BaseDetectionStrategy",
+    "HistogramAnalysisStrategy",
+    "TextureAnalysisStrategy",
+    "EdgeDetectionStrategy",
+    "DetectionStrategyProvider",
 ]

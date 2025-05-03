@@ -16,9 +16,15 @@ class Deskew(ImageProcessor):
     This class follows SRP by focusing solely on the deskew operation.
     """
 
-    def __init__(self, enabled: bool = True, threshold: str = "40%",
-                 add_border: bool = True, border_size: str = "5x5",
-                 trim_borders: bool = True, fuzz_value: str = "1%"):
+    def __init__(
+        self,
+        enabled: bool = True,
+        threshold: str = "40%",
+        add_border: bool = True,
+        border_size: str = "5x5",
+        trim_borders: bool = True,
+        fuzz_value: str = "1%",
+    ):
         self.enabled = enabled
         self.threshold = threshold
         self.add_border = add_border
@@ -45,9 +51,11 @@ class Deskew(ImageProcessor):
             return img
 
         # Create temporary files for input and output
-        with tempfile.NamedTemporaryFile(suffix='.png', delete=False) as in_file, \
-                tempfile.NamedTemporaryFile(suffix='.png', delete=False) as out_file:
-
+        with tempfile.NamedTemporaryFile(
+            suffix=".png", delete=False
+        ) as in_file, tempfile.NamedTemporaryFile(
+            suffix=".png", delete=False
+        ) as out_file:
             # Save input image to temporary file
             input_path = in_file.name
             output_path = out_file.name
@@ -84,7 +92,9 @@ class Deskew(ImageProcessor):
 
             except subprocess.CalledProcessError as e:
                 logger.error(f"Failed to deskew image: {e}")
-                logger.error(f"Error output: {e.stderr if hasattr(e, 'stderr') else 'No stderr'}")
+                logger.error(
+                    f"Error output: {e.stderr if hasattr(e, 'stderr') else 'No stderr'}"
+                )
                 return img  # Return original image on failure
             finally:
                 # Clean up temporary files

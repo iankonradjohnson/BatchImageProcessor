@@ -10,7 +10,11 @@ class TestThresholdFilter(unittest.TestCase):
         self.min_thresh = 50
         self.max_thresh = 150
         self.save_path = "/path/to/save"
-        self.filter = ThresholdFilter(min_thresh=self.min_thresh, max_thresh=self.max_thresh, blank_dir=self.save_path)
+        self.filter = ThresholdFilter(
+            min_thresh=self.min_thresh,
+            max_thresh=self.max_thresh,
+            blank_dir=self.save_path,
+        )
         self.test_image = Image.new("RGB", (10, 10), "white")
         self.test_image.save = MagicMock()
         self.mock_img_path = "/path/to/mock_img.jpg"

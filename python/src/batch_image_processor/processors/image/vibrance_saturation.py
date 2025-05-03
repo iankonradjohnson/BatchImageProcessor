@@ -6,11 +6,11 @@ from PIL import Image, ImageEnhance
 
 class VibranceSaturation(ImageProcessor):
     def __init__(self, config):
-        self.vibrance = config.get('vibrance', 1.0)
-        self.saturation = config.get('saturation', 1.0)
+        self.vibrance = config.get("vibrance", 1.0)
+        self.saturation = config.get("saturation", 1.0)
 
     def process(self, img: Image, is_left: bool = None) -> Image:
-        img = img.convert('RGB')
+        img = img.convert("RGB")
         img = ImageEnhance.Color(img).enhance(self.saturation)
         img_np = np.array(img)
         img_np = cv2.cvtColor(img_np, cv2.COLOR_RGB2BGR)

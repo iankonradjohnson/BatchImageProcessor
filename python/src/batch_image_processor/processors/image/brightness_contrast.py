@@ -2,6 +2,7 @@ from batch_image_processor.processors.image.image_processor import ImageProcesso
 
 from PIL import Image, ImageEnhance
 
+
 class BrightnessContrast(ImageProcessor):
     def __init__(self, config):
         """
@@ -34,8 +35,3 @@ class BrightnessContrast(ImageProcessor):
             img = ImageEnhance.Contrast(img).enhance(self.contrast)
 
         return img
-
-
-
-
-

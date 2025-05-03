@@ -7,7 +7,9 @@ from batch_image_processor.processors.image.image_processor import ImageProcesso
 
 
 class ThresholdFilter(ImageProcessor):
-    def __init__(self, min_thresh: float = 0, max_thresh: float = 255, blank_dir: str = None):
+    def __init__(
+        self, min_thresh: float = 0, max_thresh: float = 255, blank_dir: str = None
+    ):
         self.min_thresh = min_thresh
         self.max_thresh = max_thresh
         self.blank_dir = blank_dir
@@ -24,5 +26,5 @@ class ThresholdFilter(ImageProcessor):
             if not os.path.exists(self.blank_dir):
                 os.mkdir(self.blank_dir)
             img.save(self.blank_dir)
-            
+
         return None

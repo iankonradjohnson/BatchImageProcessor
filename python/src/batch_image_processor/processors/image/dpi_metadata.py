@@ -2,6 +2,7 @@ from batch_image_processor.processors.image.image_processor import ImageProcesso
 
 from PIL import Image
 
+
 class DpiMetadata(ImageProcessor):
     def __init__(self, config):
         """

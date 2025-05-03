@@ -20,38 +20,49 @@ class TestImagePipeline(unittest.TestCase):
     @patch("PIL.Image.open")
     @patch("os.path.exists", return_value=False)
     @patch("os.mkdir")
-    def test_process_and_save_image(self, mock_mkdir, mock_exists, mock_open):
+    @patch.object(ImagePipeline, "is_image", return_value=True)
+    def test_process_and_save_image(
+        self, mock_is_image, mock_mkdir, mock_exists, mock_open
+    ):
         mock_open.return_value.__enter__.return_value = self.test_image
-        pipeline = ImagePipeline([self.mock_processor], self.input_dir, self.save_dir, self.deleted_dir)
+        pipeline = ImagePipeline(
+            [self.mock_processor], self.input_dir, self.save_dir, self.deleted_dir
+        )
 
-        pipeline.process_and_save_image(self.mock_img_filename, True)
+        pipeline.process_and_save_image(self.mock_img_filename)
 
         mock_open.assert_called_once_with(f"{self.input_dir}/{self.mock_img_filename}")
-        self.mock_processor.process.assert_called_once_with(self.test_image, True)
+        self.mock_processor.process.assert_called_once_with(self.test_image)
         self.test_image.save.assert_called_with(
-            f"{self.save_dir}/{self.mock_img_filename}"
+            f"{self.save_dir}/{self.mock_img_filename.split('.')[0]}.png"
         )
         mock_mkdir.assert_called_once_with(self.save_dir)
 
     @patch("PIL.Image.open")
     def test_unidentified_image_error(self, mock_open):
         mock_open.side_effect = UnidentifiedImageError
-        pipeline = ImagePipeline([self.mock_processor], self.input_dir, self.save_dir, self.deleted_dir)
+        pipeline = ImagePipeline(
+            [self.mock_processor], self.input_dir, self.save_dir, self.deleted_dir
+        )
 
-        pipeline.process_and_save_image(self.mock_img_filename, True)
+        pipeline.process_and_save_image(self.mock_img_filename)
 
         self.mock_processor.process.assert_not_called()
 
     @patch("PIL.Image.open")
     @patch("os.path.exists", return_value=False)
     @patch("os.mkdir")
+    @patch.object(ImagePipeline, "is_image", return_value=True)
     def test_process_and_save_none_image_does_not_save(
-        self, mock_mkdir, mock_exists, mock_open
+        self, mock_is_image, mock_mkdir, mock_exists, mock_open
     ):
         mock_open.return_value.__enter__.return_value = self.test_image
         self.mock_processor.process.return_value = None
-        pipeline = ImagePipeline([self.mock_processor], self.input_dir, self.save_dir, self.deleted_dir)
+        pipeline = ImagePipeline(
+            [self.mock_processor], self.input_dir, self.save_dir, None
+        )  # No deleted_dir
 
-        pipeline.process_and_save_image(self.mock_img_filename, True)
+        pipeline.process_and_save_image(self.mock_img_filename)
 
-        self.test_image.save.assert_not_called()
+        # Check that save to output directory was not called
+        self.assertEqual(self.test_image.save.call_count, 0)

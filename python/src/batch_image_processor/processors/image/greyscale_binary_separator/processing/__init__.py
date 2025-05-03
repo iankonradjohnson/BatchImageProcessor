@@ -8,9 +8,9 @@ from .grayscale_processing import GrayscaleProcessingStrategy
 from .processing_provider import ProcessingStrategyProvider
 
 __all__ = [
-    'ProcessingStrategy',
-    'BaseProcessingStrategy',
-    'BinaryProcessingStrategy',
-    'GrayscaleProcessingStrategy',
-    'ProcessingStrategyProvider'
+    "ProcessingStrategy",
+    "BaseProcessingStrategy",
+    "BinaryProcessingStrategy",
+    "GrayscaleProcessingStrategy",
+    "ProcessingStrategyProvider",
 ]

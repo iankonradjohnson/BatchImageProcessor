@@ -8,4 +8,4 @@ class GaussianBlur(ImageProcessor):
         self.config = config
 
     def process(self, img: Image, is_left: bool = None) -> Image:
-        return img.filter(ImageFilter.GaussianBlur(radius = self.config.get("radius", 1)))
+        return img.filter(ImageFilter.GaussianBlur(radius=self.config.get("radius", 1)))

@@ -40,6 +40,3 @@ class DitherGreyscale(ImageProcessor):
 
         else:
             raise ValueError(f"Unsupported dither type: {self.dither_type}")
-
-
-

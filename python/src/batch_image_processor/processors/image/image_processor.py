@@ -18,7 +18,7 @@ class ImageProcessor:
     method to implement the desired image operation.
     """
 
-    def process(self, img: Image, is_left: bool = None) -> Image:
+    def process(self, img: Image) -> Image:
         """
         Process the input image.
 

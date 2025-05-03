@@ -7,4 +7,4 @@ grayscale and binary regions in document images.
 
 from .greyscale_binary_separator import GreyscaleBinarySeparator
 
-__all__ = ['GreyscaleBinarySeparator']
+__all__ = ["GreyscaleBinarySeparator"]

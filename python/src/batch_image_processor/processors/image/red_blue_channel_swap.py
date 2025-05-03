@@ -8,6 +8,6 @@ class RedBlueChannelSwap(ImageProcessor):
         self.config = config
 
     def process(self, img: Image, is_left: bool = None) -> Image:
-        img = img.convert('RGB')
+        img = img.convert("RGB")
         r, g, b = img.split()
-        return Image.merge('RGB', (b, g, r))
+        return Image.merge("RGB", (b, g, r))

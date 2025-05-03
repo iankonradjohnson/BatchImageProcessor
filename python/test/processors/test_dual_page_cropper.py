@@ -14,48 +14,28 @@ class TestDualPageCropper(TestCase):
         draw.rectangle([10, 10, 90, 190], fill="blue")  # Left rect
         draw.rectangle([110, 10, 190, 190], fill="red")  # Right rect
 
-    def test_left_crop(self):
-        cropper = DualPageCropper(
-            left_left=0,
-            left_top=0,
-            right_left=100,
-            right_top=0,
-            width=100,
-            height=200
-        )
-        cropped_left = cropper.process(self.img, True)
-        self.assertEqual(
-            cropped_left.getpixel((40, 100)), (0, 0, 255)
-        )
+    def test_crop_left_area(self):
+        # Test cropping the left area of the image
+        cropper = DualPageCropper(left=0, top=0, width=100, height=200)
+        cropped_img = cropper.process(self.img)
+        self.assertEqual(cropped_img.getpixel((40, 100)), (0, 0, 255))  # Blue pixel
 
-    def test_right_crop(self):
-        cropper = DualPageCropper(
-            left_left=0,
-            left_top=0,
-            right_left=100,
-            right_top=0,
-            width=100,
-            height=200
-        )
-        cropped_right = cropper.process(self.img, False)
-        self.assertEqual(
-            cropped_right.getpixel((40, 100)), (255, 0, 0)
-        )
+    def test_crop_right_area(self):
+        # Test cropping the right area of the image
+        cropper = DualPageCropper(left=100, top=0, width=100, height=200)
+        cropped_img = cropper.process(self.img)
+        self.assertEqual(cropped_img.getpixel((40, 100)), (255, 0, 0))  # Red pixel
 
-    def test_toggle_back_to_left(self):
+    def test_backward_compatibility(self):
+        # Test backward compatibility with old parameter names
         cropper = DualPageCropper(
-            left_left=0,
-            left_top=0,
-            right_left=100,
-            right_top=0,
+            left_left=0,  # Should be used as 'left'
+            left_top=0,  # Should be used as 'top'
             width=100,
-            height=200
+            height=200,
         )
-        cropper.process(self.img, False)
-        cropped_left_again = cropper.process(self.img, True)
-        self.assertEqual(
-            cropped_left_again.getpixel((40, 100)), (0, 0, 255)
-        )
+        cropped_img = cropper.process(self.img)
+        self.assertEqual(cropped_img.getpixel((40, 100)), (0, 0, 255))  # Blue pixel
 
 
 if __name__ == "__main__":

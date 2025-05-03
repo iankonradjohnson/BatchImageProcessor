@@ -11,7 +11,7 @@ class MoireProcessor(ImageProcessor):
     def process(self, img: Image, is_left: bool = None) -> Image:
         img = img.convert("RGBA")
         screen = self.create_screen(img.width, img.height)
-        return Image.blend(img, screen, .25)
+        return Image.blend(img, screen, 0.25)
 
     def create_screen(self, width, height) -> Image:
         canvas = np.ones((height, width)) * 255
@@ -23,7 +23,7 @@ class MoireProcessor(ImageProcessor):
         # Draw evenly spaced horizontal lines with subpixel precision
         for i in range(0, num_lines):
             y = i * line_spacing
-            canvas[int(y - width):int(y), :] = 0
+            canvas[int(y - width) : int(y), :] = 0
 
         screen = Image.fromarray(canvas)
-        return screen.convert('RGBA')
+        return screen.convert("RGBA")

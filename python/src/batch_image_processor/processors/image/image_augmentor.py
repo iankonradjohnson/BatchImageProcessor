@@ -4,8 +4,8 @@ import albumentations as A
 
 from batch_image_processor.processors.image.image_processor import ImageProcessor
 
-class ImageAugmentor(ImageProcessor):
 
+class ImageAugmentor(ImageProcessor):
     def __init__(self, config):
         self.config = config
 
@@ -21,13 +21,13 @@ class ImageAugmentor(ImageProcessor):
         """
 
         transform_mappings = {
-            'horizontal_flip': A.HorizontalFlip,
-            'rotation': A.Rotate,
-            'brightness_contrast': A.RandomBrightnessContrast,
-            'shift_scale_rotate': A.ShiftScaleRotate,
-            'elastic_transform': A.ElasticTransform,
-            'grid_distortion': A.GridDistortion,
-            'optical_distortion': A.OpticalDistortion
+            "horizontal_flip": A.HorizontalFlip,
+            "rotation": A.Rotate,
+            "brightness_contrast": A.RandomBrightnessContrast,
+            "shift_scale_rotate": A.ShiftScaleRotate,
+            "elastic_transform": A.ElasticTransform,
+            "grid_distortion": A.GridDistortion,
+            "optical_distortion": A.OpticalDistortion,
         }
 
         transforms_list = []
@@ -41,6 +41,6 @@ class ImageAugmentor(ImageProcessor):
 
         img_np = np.array(img)
         augmented = transforms(image=img_np)
-        img_aug = Image.fromarray(augmented['image'])
+        img_aug = Image.fromarray(augmented["image"])
 
         return img_aug

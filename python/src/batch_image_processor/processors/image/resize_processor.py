@@ -15,7 +15,9 @@ class ResizeProcessor(ImageProcessor):
             "nearest": Image.NEAREST,
         }
 
-        self.resampling_method = self.resampling_methods.get(self.resampling_method, Image.BILINEAR)
+        self.resampling_method = self.resampling_methods.get(
+            self.resampling_method, Image.BILINEAR
+        )
 
     def process(self, img: Image, is_left: bool = None) -> Image:
         resize_factor = random.uniform(self.resize_range[0], self.resize_range[1])

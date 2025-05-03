@@ -7,28 +7,29 @@ from batch_image_processor.processors.image.image_processor import ImageProcesso
 
 Image.MAX_IMAGE_PIXELS = None
 
+
 class ImagePipeline:
-    def __init__(self, processors: List[ImageProcessor], input_dir, output_dir, deleted_dir):
+    def __init__(
+        self, processors: List[ImageProcessor], input_dir, output_dir, deleted_dir
+    ):
         self.processors = processors
         self.input_dir = input_dir
         self.output_dir = output_dir
         self.deleted_dir = deleted_dir
 
-    def process_and_save_image(self, filepath: str, is_left: bool = None, copy_num: int = 1) -> None:
+    def process_and_save_image(self, filepath: str, copy_num: int = 1) -> None:
         try:
-            split = os.path.basename(filepath).split('.')
-            basename, ext = '.'.join(split[:-1]), split[-1]
+            split = os.path.basename(filepath).split(".")
+            basename, ext = ".".join(split[:-1]), split[-1]
             image_path = os.path.join(self.input_dir, filepath)
-            save_path = os.path.join(
-                self.output_dir,
-                f"{basename}.png")
+            save_path = os.path.join(self.output_dir, f"{basename}.png")
 
             with Image.open(image_path) as img:
                 if not self.is_image(image_path):
                     return
                 for processor in self.processors:
                     original_img = img
-                    img = processor.process(img, is_left)
+                    img = processor.process(img)
 
                     # If image is none, this is a result of a filter and image should not be saved
                     if img is None:

@@ -17,14 +17,14 @@ def worker(dir_config):
         output_dir = dir_config["output_dir"]
         deleted_dir = dir_config.get("deleted_dir", None)
         copies = dir_config.get("copies", 1)
-        
+
         print(f"Processing directory: {input_dir}")
-        
+
         processors = [
             ImageProcessorFactory.create_processor(processor_config)
             for processor_config in dir_config["processors"]
         ]
-        
+
         batch_processor = BatchProcessorFactory.create_batch_processor(
             processor_type, input_dir, output_dir, processors, deleted_dir, copies
         )
@@ -49,10 +49,7 @@ def main():
 
     with tqdm(total=len(directory_list)) as pbar:
         with ProcessPoolExecutor() as executor:
-            futures = {
-                executor.submit(worker, item):
-                    item for item in directory_list
-            }
+            futures = {executor.submit(worker, item): item for item in directory_list}
             for _ in as_completed(futures):
                 pbar.update(1)
 

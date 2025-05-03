@@ -5,7 +5,6 @@ from batch_image_processor.processors.image.image_processor import ImageProcesso
 
 
 class ThresholdProcessor(ImageProcessor):
-
     def __init__(self, threshold_value: int = 128):
         self.threshold_value = threshold_value
 

@@ -48,28 +48,32 @@ class BorderProcessor(ImageProcessor):
         img_copy = img.copy()
         width, height = img_copy.size
         draw = ImageDraw.Draw(img_copy)
-        
+
         # Get the white color value based on the image mode
         white_color = "white"
         if img_copy.mode == "1":
             white_color = 1
         elif img_copy.mode == "L":
             white_color = 255
-        
+
         # Fill top border
         if self.top > 0:
             draw.rectangle([(0, 0), (width - 1, self.top - 1)], fill=white_color)
-        
+
         # Fill bottom border
         if self.bottom > 0:
-            draw.rectangle([(0, height - self.bottom), (width - 1, height - 1)], fill=white_color)
-        
+            draw.rectangle(
+                [(0, height - self.bottom), (width - 1, height - 1)], fill=white_color
+            )
+
         # Fill left border
         if self.left > 0:
             draw.rectangle([(0, 0), (self.left - 1, height - 1)], fill=white_color)
-        
+
         # Fill right border
         if self.right > 0:
-            draw.rectangle([(width - self.right, 0), (width - 1, height - 1)], fill=white_color)
-        
+            draw.rectangle(
+                [(width - self.right, 0), (width - 1, height - 1)], fill=white_color
+            )
+
         return img_copy
