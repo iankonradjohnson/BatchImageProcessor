@@ -6,12 +6,13 @@ processors. It provides a registry-based approach to creating VideoProcessor
 instances based on configuration.
 """
 
-from typing import Dict, Any, Type
+from typing import Dict, Any, Type, Optional
 
 from batch_image_processor.factory.media_processor_factory import MediaProcessorFactory
 from batch_image_processor.processors.video.video_clip import VideoClip
 from batch_image_processor.processors.video.video_processor import VideoProcessor
 from batch_image_processor.processors.video.video_rotator import VideoRotator
+from batch_image_processor.processors.video.moviepy_video_clip import MoviePyVideoClip
 
 
 class VideoProcessorFactory(MediaProcessorFactory[VideoClip]):
@@ -25,6 +26,9 @@ class VideoProcessorFactory(MediaProcessorFactory[VideoClip]):
     
     # Registry of processor types and their classes
     _processor_registry: Dict[str, Type[VideoProcessor]] = {}
+    
+    # Default video clip implementation to use
+    _video_clip_impl: Type[VideoClip] = MoviePyVideoClip
     
     @classmethod
     def create_processor(cls, config: Dict[str, Any]) -> VideoProcessor:
@@ -63,6 +67,34 @@ class VideoProcessorFactory(MediaProcessorFactory[VideoClip]):
             processor_class: The VideoProcessor class to instantiate for this type.
         """
         cls._processor_registry[processor_type] = processor_class
+    
+    @classmethod
+    def create_video_clip(cls, file_path: str) -> VideoClip:
+        """
+        Create a VideoClip instance for the given file.
+        
+        This uses the default VideoClip implementation (MoviePyVideoClip by default).
+        
+        Args:
+            file_path: Path to the video file
+            
+        Returns:
+            A VideoClip instance
+        """
+        return cls._video_clip_impl.load(file_path)
+    
+    @classmethod
+    def set_video_clip_impl(cls, impl_class: Type[VideoClip]) -> None:
+        """
+        Set the default VideoClip implementation to use.
+        
+        This can be used to override the default implementation for testing
+        or to use a different backend.
+        
+        Args:
+            impl_class: The VideoClip implementation class to use
+        """
+        cls._video_clip_impl = impl_class
 
 
 # Register video processor types as they are implemented

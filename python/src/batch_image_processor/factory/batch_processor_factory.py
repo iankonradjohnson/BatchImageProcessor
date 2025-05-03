@@ -10,8 +10,9 @@ from typing import Dict, Any, List, Type, TypeVar, Generic, ClassVar
 from PIL import Image
 
 from batch_image_processor.factory.image_processor_factory import ImageProcessorFactory
-from batch_image_processor.processors.batch.batch_processor import BatchProcessor
 from batch_image_processor.processors.media_processor import MediaProcessor
+# Import BatchProcessor at function level to avoid circular import
+# from batch_image_processor.processors.batch.batch_processor import BatchProcessor
 from batch_image_processor.processors.pipeline.image_pipeline import ImagePipeline
 
 
@@ -32,7 +33,7 @@ class BatchProcessorFactory:
         processors: List[MediaProcessor],
         deleted_dir: str = None,
         copies: int = 1,
-    ) -> BatchProcessor:
+    ):
         """
         Create a batch processor based on the specified type.
         
@@ -50,6 +51,9 @@ class BatchProcessorFactory:
         Raises:
             ValueError: If the processor type is invalid or not supported.
         """
+        # Import here to avoid circular import
+        from batch_image_processor.processors.batch.batch_processor import BatchProcessor
+        
         # Handle SinglePage, DualPage (for backward compatibility), and ImageBatch
         if processor_type in ("Image"):
             return BatchProcessor[Image.Image](

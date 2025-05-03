@@ -11,7 +11,8 @@ import logging
 
 from batch_image_processor.processors.media_processor import MediaProcessor
 from batch_image_processor.processors.pipeline.image_pipeline import MediaPipeline
-from batch_image_processor.processors.video.video_clip import VideoClip, create_video_clip
+from batch_image_processor.processors.video.video_clip import VideoClip
+from batch_image_processor.factory.video_processor_factory import VideoProcessorFactory
 
 
 class VideoPipeline(MediaPipeline[VideoClip]):
@@ -60,8 +61,8 @@ class VideoPipeline(MediaPipeline[VideoClip]):
             if self.deleted_dir and not os.path.exists(self.deleted_dir):
                 os.makedirs(self.deleted_dir, exist_ok=True)
 
-            # Load the video using the best available implementation
-            clip = create_video_clip(video_path)
+            # Load the video using the VideoProcessorFactory
+            clip = VideoProcessorFactory.create_video_clip(video_path)
             
             # Process the video through all processors
             for processor in self.processors:
@@ -94,7 +95,7 @@ class VideoPipeline(MediaPipeline[VideoClip]):
             True if the file is a valid video, False otherwise
         """
         try:
-            clip = create_video_clip(file_path)
+            clip = VideoProcessorFactory.create_video_clip(file_path)
             valid = clip.duration > 0
             clip.close()
             return valid
