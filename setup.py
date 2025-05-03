@@ -7,6 +7,10 @@ with open("requirements.txt", "r") as f:
 # Parse requirements to make them more flexible
 requirements = []
 for req in requirements_raw:
+    # Skip comments and empty lines
+    if req.startswith('#') or not req.strip():
+        continue
+    
     # Convert specific versions to minimum versions for core packages
     if re.match(r'^(numpy|Pillow|moviepy|scipy|scikit-image|scikit-learn|opencv-python).*$', req):
         name = req.split('==')[0] if '==' in req else req.split('>=')[0]
@@ -20,5 +24,6 @@ setup(
     package_dir={"": "python/src"},
     packages=find_packages(where="python/src"),
     install_requires=requirements,
+    # PyAV is now a required dependency
     python_requires='>=3.8',
 )
