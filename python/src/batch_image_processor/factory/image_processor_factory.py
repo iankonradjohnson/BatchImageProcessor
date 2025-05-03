@@ -25,7 +25,6 @@ from batch_image_processor.processors.image.greyscale import Greyscale
 from batch_image_processor.processors.image.greyscale_binary_separator import (
     GreyscaleBinarySeparator,
 )
-from batch_image_processor.processors.image.image_augmentor import ImageAugmentor
 from batch_image_processor.processors.image.image_mode_converter import (
     ImageModeConverter,
 )
@@ -125,7 +124,6 @@ class ImageProcessorFactory(MediaProcessorFactory[Image.Image]):
 
 # Register all known processor types
 ImageProcessorFactory.register_processor("ImageRotator", ImageRotator)
-ImageProcessorFactory.register_processor("ImageAugmentor", ImageAugmentor)
 ImageProcessorFactory.register_processor("Resize", ResizeProcessor)
 ImageProcessorFactory.register_processor("Threshold", ThresholdProcessor)
 ImageProcessorFactory.register_processor("ThresholdFilter", ThresholdFilter)

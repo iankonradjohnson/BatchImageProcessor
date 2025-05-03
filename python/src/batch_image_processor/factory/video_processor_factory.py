@@ -7,10 +7,11 @@ instances based on configuration.
 """
 
 from typing import Dict, Any, Type
-from moviepy.editor import VideoFileClip
+from moviepy import VideoFileClip
 
 from batch_image_processor.factory.media_processor_factory import MediaProcessorFactory
 from batch_image_processor.processors.video.video_processor import VideoProcessor
+from batch_image_processor.processors.video.video_rotator import VideoRotator
 
 
 class VideoProcessorFactory(MediaProcessorFactory[VideoFileClip]):
@@ -41,11 +42,14 @@ class VideoProcessorFactory(MediaProcessorFactory[VideoFileClip]):
             ValueError: If the processor type is invalid or not supported.
         """
         processor_type = config.get("type")
+        
+        # Extract parameters, removing 'type' key
+        params = {k: v for k, v in config.items() if k != "type"}
             
         # Use the registry for processor types
         if processor_type in cls._processor_registry:
             processor_class = cls._processor_registry[processor_type]
-            return processor_class(config)
+            return processor_class(**params)
                 
         raise ValueError(f"Invalid processor type: {processor_type}")
     
@@ -62,4 +66,4 @@ class VideoProcessorFactory(MediaProcessorFactory[VideoFileClip]):
 
 
 # Register video processor types as they are implemented
-# Example: VideoProcessorFactory.register_processor("Resize", VideoResizeProcessor)
+VideoProcessorFactory.register_processor("VideoRotator", VideoRotator)

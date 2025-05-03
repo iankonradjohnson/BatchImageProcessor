@@ -8,7 +8,7 @@ import unittest
 from unittest.mock import MagicMock, patch
 from typing import Dict, Any
 
-from moviepy.editor import VideoFileClip
+from moviepy import VideoFileClip
 
 from batch_image_processor.factory.video_processor_factory import VideoProcessorFactory
 from batch_image_processor.processors.video.video_processor import VideoProcessor
@@ -16,8 +16,8 @@ from batch_image_processor.processors.video.video_processor import VideoProcesso
 
 # Create a mock video processor for testing
 class MockVideoProcessor(VideoProcessor):
-    def __init__(self, config: Dict[str, Any]):
-        self.config = config
+    def __init__(self, **kwargs):
+        self.config = kwargs
         
     def process(self, clip: VideoFileClip) -> VideoFileClip:
         return clip
@@ -51,7 +51,8 @@ class TestVideoProcessorFactory(unittest.TestCase):
         
         # Check if the correct type was created
         self.assertIsInstance(processor, MockVideoProcessor)
-        self.assertEqual(processor.config, config)
+        # Check just the param1 value since 'type' is removed in the factory
+        self.assertEqual(processor.config["param1"], config["param1"])
         
     def test_create_invalid_processor(self):
         """Test creating a processor with an invalid type."""

@@ -9,7 +9,7 @@ import os.path
 from typing import List, Optional
 import logging
 
-from moviepy.editor import VideoFileClip
+from moviepy import VideoFileClip
 
 from batch_image_processor.processors.media_processor import MediaProcessor
 from batch_image_processor.processors.pipeline.image_pipeline import MediaPipeline

@@ -5,7 +5,7 @@ This module defines the VideoProcessor base class that implements the MediaProce
 interface for video processing operations using MoviePy.
 """
 
-from moviepy.editor import VideoFileClip
+from moviepy import VideoFileClip
 
 from batch_image_processor.processors.media_processor import MediaProcessor
 

@@ -1,0 +1,8 @@
+---
+# Auto-rotate video configuration
+input_dir: input
+output_dir: output
+processors:
+  - type: VideoRotator
+    rotation_direction: left
+    target_orientation: vertical
