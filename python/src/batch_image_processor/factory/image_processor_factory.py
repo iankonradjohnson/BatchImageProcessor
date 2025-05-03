@@ -7,6 +7,7 @@ instances based on configuration.
 """
 
 from typing import Dict, Any, Type
+
 from PIL import Image
 
 from batch_image_processor.factory.media_processor_factory import MediaProcessorFactory
@@ -16,9 +17,9 @@ from batch_image_processor.processors.image.brightness_contrast import (
 )
 from batch_image_processor.processors.image.color_balance import ColorBalance
 from batch_image_processor.processors.image.color_inverter import ColorInverter
+from batch_image_processor.processors.image.deskew import Deskew
 from batch_image_processor.processors.image.dither_greyscale import DitherGreyscale
 from batch_image_processor.processors.image.dpi_metadata import DpiMetadata
-from batch_image_processor.processors.image.dual_page_cropper import DualPageCropper
 from batch_image_processor.processors.image.gaussian_blur import GaussianBlur
 from batch_image_processor.processors.image.greyscale import Greyscale
 from batch_image_processor.processors.image.greyscale_binary_separator import (
@@ -35,7 +36,6 @@ from batch_image_processor.processors.image.red_blue_channel_swap import (
     RedBlueChannelSwap,
 )
 from batch_image_processor.processors.image.resize_processor import ResizeProcessor
-from batch_image_processor.processors.image.deskew import Deskew
 from batch_image_processor.processors.image.threshold_filter import ThresholdFilter
 from batch_image_processor.processors.image.threshold_processor import (
     ThresholdProcessor,
@@ -143,4 +143,3 @@ ImageProcessorFactory.register_processor("LevelsAdjustment", LevelsAdjustment)
 ImageProcessorFactory.register_processor("GreyscaleBinarySeparator", GreyscaleBinarySeparator)
 ImageProcessorFactory.register_processor("Deskew", Deskew)
 ImageProcessorFactory.register_processor("BorderProcessor", BorderProcessor)
-ImageProcessorFactory.register_processor("AutoPageCropper", DualPageCropper)

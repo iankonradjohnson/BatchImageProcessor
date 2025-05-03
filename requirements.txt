@@ -22,6 +22,7 @@ tomli==2.0.1
 tomlkit==0.12.1
 typing_extensions==4.7.1
 wrapt==1.15.0
+moviepy==1.0.3
 
 opencv-python~=4.8.0.76
 setuptools~=58.0.4
