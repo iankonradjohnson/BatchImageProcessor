@@ -14,9 +14,9 @@ class TestBatchProcessorFactory(unittest.TestCase):
         deleted_dir = "/path/to/deleted"
         processors = [MagicMock()]
         
-        # Test with SinglePage type
+        # Test with Image type (replaced SinglePage)
         processor = BatchProcessorFactory.create_batch_processor(
-            "SinglePage", input_dir, output_dir, processors, deleted_dir
+            "Image", input_dir, output_dir, processors, deleted_dir
         )
         
         self.assertIsInstance(processor, BatchProcessor)

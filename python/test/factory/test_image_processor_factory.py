@@ -1,7 +1,6 @@
 import unittest
 
 from batch_image_processor.factory.image_processor_factory import ImageProcessorFactory
-from batch_image_processor.processors.image.dual_page_cropper import DualPageCropper
 from batch_image_processor.processors.image.image_rotator import ImageRotator
 
 
@@ -24,22 +23,7 @@ class TestImageProcessorFactory(unittest.TestCase):
         self.assertEqual(processor.left, None)
         self.assertEqual(processor.right, None)
 
-    def test_create_dual_page_cropper(self):
-        config = {
-            "type": "AutoPageCropper",
-            "left": 10,
-            "top": 20,
-            "width": 100,
-            "height": 200,
-        }
-
-        processor = ImageProcessorFactory.create_processor(config)
-
-        self.assertIsInstance(processor, DualPageCropper)
-        self.assertEqual(processor.left, config.get("left"))
-        self.assertEqual(processor.top, config.get("top"))
-        self.assertEqual(processor.width, config.get("width"))
-        self.assertEqual(processor.height, config.get("height"))
+    # Test for AutoPageCropper removed as it has been deprecated
 
     def test_unknown_processor_type(self):
         config = {"type": "UnknownType"}
