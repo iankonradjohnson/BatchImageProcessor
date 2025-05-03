@@ -73,10 +73,6 @@ class ImageProcessorFactory(MediaProcessorFactory[Image.Image]):
             ValueError: If the processor type is invalid or not supported.
         """
         processor_type = config.get("type")
-        
-        # Special case for AutoPageCropper due to complex initialization
-        if processor_type == "AutoPageCropper":
-            return cls._create_dual_page_cropper(config)
             
         # Use the registry for all other processor types
         if processor_type in cls._processor_registry:
@@ -125,43 +121,6 @@ class ImageProcessorFactory(MediaProcessorFactory[Image.Image]):
             processor_class: The ImageProcessor class to instantiate for this type.
         """
         cls._processor_registry[processor_type] = processor_class
-    
-    @classmethod
-    def _create_dual_page_cropper(cls, config: Dict[str, Any]) -> DualPageCropper:
-        """
-        Helper method to create a DualPageCropper with proper parameter handling.
-        
-        Args:
-            config: Configuration dictionary for the DualPageCropper.
-            
-        Returns:
-            Configured DualPageCropper instance.
-        """
-        # Handle both dictionary and direct string/number values
-        left = config.get("left", {})
-        if isinstance(left, dict):
-            left_val = left.get("x_start") or left.get("left")
-            top_val = left.get("y_start") or left.get("top")
-        else:
-            left_val = left
-            top_val = config.get("top")
-
-        # Handle width and height directly from config
-        width_val = config.get("width")
-        height_val = config.get("height")
-
-        # If width/height not in direct config, try to get from image_size
-        if width_val is None or height_val is None:
-            image_size = config.get("image_size", {})
-            if isinstance(image_size, dict):
-                if width_val is None:
-                    width_val = image_size.get("width")
-                if height_val is None:
-                    height_val = image_size.get("height")
-
-        return DualPageCropper(
-            left=left_val, top=top_val, width=width_val, height=height_val
-        )
 
 
 # Register all known processor types
