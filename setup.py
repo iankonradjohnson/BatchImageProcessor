@@ -12,7 +12,7 @@ for req in requirements_raw:
         continue
     
     # Convert specific versions to minimum versions for core packages
-    if re.match(r'^(numpy|Pillow|moviepy|scipy|scikit-image|scikit-learn|opencv-python).*$', req):
+    if re.match(r'^(numpy|Pillow|moviepy|scipy|scikit-image|scikit-learn|opencv-python|matplotlib|contourpy).*$', req):
         name = req.split('==')[0] if '==' in req else req.split('>=')[0]
         requirements.append(f"{name}")
     else:
