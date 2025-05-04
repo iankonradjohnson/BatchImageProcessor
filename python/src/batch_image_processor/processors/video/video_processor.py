@@ -5,6 +5,7 @@ This module defines the VideoProcessor base class that implements the MediaProce
 interface for video processing operations using the VideoClip interface.
 """
 
+from typing import Union, List
 from batch_image_processor.processors.media_processor import MediaProcessor
 from batch_image_processor.processors.video.video_clip import VideoClip
 
@@ -18,7 +19,7 @@ class VideoProcessor(MediaProcessor[VideoClip]):
     specific video processing algorithms.
     """
     
-    def process(self, clip: VideoClip) -> VideoClip:
+    def process(self, clip: VideoClip) -> Union[VideoClip, List[VideoClip], None]:
         """
         Process the video clip.
         
@@ -29,6 +30,8 @@ class VideoProcessor(MediaProcessor[VideoClip]):
             clip: The input video clip to be processed
             
         Returns:
-            The processed video clip
+            - The processed video clip
+            - A list of processed video clips (for splitting operations)
+            - None if the video should be filtered out
         """
         raise NotImplementedError("Subclasses must implement process()")

@@ -7,7 +7,7 @@ Implementations should provide the `process` method to handle
 the actual media processing logic.
 """
 
-from typing import Generic, TypeVar, Dict, Any, Protocol, runtime_checkable
+from typing import Generic, TypeVar, Dict, Any, Protocol, runtime_checkable, Union, List
 
 T = TypeVar('T')  # Generic type for input/output media
 
@@ -22,7 +22,7 @@ class MediaProcessor(Protocol[T]):
     the `process` method to handle the specific media type.
     """
 
-    def process(self, media: T) -> T:
+    def process(self, media: T) -> Union[T, List[T], None]:
         """
         Process the input media.
 
@@ -32,6 +32,8 @@ class MediaProcessor(Protocol[T]):
             media: The input media to be processed.
 
         Returns:
-            The processed media of the same type.
+            - A single processed media object
+            - A list of processed media objects (for splitting operations)
+            - None if the media should be filtered out
         """
         ...
