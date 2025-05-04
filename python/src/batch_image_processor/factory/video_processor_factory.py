@@ -11,7 +11,7 @@ from typing import Dict, Any, Type, Optional
 from batch_image_processor.factory.media_processor_factory import MediaProcessorFactory
 from batch_image_processor.processors.video.video_clip import VideoClip
 from batch_image_processor.processors.video.video_processor import VideoProcessor
-from batch_image_processor.processors.video.video_rotator import VideoRotator
+from batch_image_processor.processors.video.video_rotator import AutoOrientationResolver
 from batch_image_processor.processors.video.moviepy_video_clip import MoviePyVideoClip
 
 
@@ -98,4 +98,4 @@ class VideoProcessorFactory(MediaProcessorFactory[VideoClip]):
 
 
 # Register video processor types as they are implemented
-VideoProcessorFactory.register_processor("VideoRotator", VideoRotator)
+VideoProcessorFactory.register_processor("VideoRotator", AutoOrientationResolver)

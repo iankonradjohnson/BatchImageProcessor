@@ -36,22 +36,10 @@ class VideoClip(ABC):
     def rotation(self) -> Optional[int]:
         """Get the rotation angle from metadata, if available."""
         pass
-    
+
     @property
-    def is_horizontal(self) -> bool:
-        """
-        Check if the video is effectively in horizontal orientation.
-        
-        This considers both the raw dimensions and any rotation metadata.
-        """
-        # Basic orientation check
-        is_horizontal = self.width > self.height
-        
-        # If rotation is 90 or 270 degrees, flip the orientation
-        if self.rotation in [90, -90, 270, -270]:
-            is_horizontal = not is_horizontal
-            
-        return is_horizontal
+    def orientation(self) -> str:
+        pass
     
     @abstractmethod
     def close(self) -> None:

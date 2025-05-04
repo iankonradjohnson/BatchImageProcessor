@@ -6,7 +6,7 @@ from batch_image_processor.processors.video.video_clip import VideoClip
 from batch_image_processor.processors.video.video_processor import VideoProcessor
 
 
-class VideoRotator(VideoProcessor):
+class AutoOrientationResolver(VideoProcessor):
     """Video rotation processor."""
     
     def __init__(
@@ -29,7 +29,7 @@ class VideoRotator(VideoProcessor):
             The processed video clip with appropriate rotation
         """
         # Check if the video already matches the target orientation
-        is_horizontal = clip.is_horizontal
+        is_horizontal = clip.orientation == "landscape"
         
         # Determine if we need to rotate based on target orientation
         needs_rotation = (self.target_orientation == "vertical" and is_horizontal) or \
@@ -37,7 +37,7 @@ class VideoRotator(VideoProcessor):
         
         if needs_rotation:
             # Determine rotation angle based on direction
-            angle = 90 if self.rotation_direction == "right" else -90
+            angle = -90 if self.rotation_direction == "right" else 90
             clip = clip.rotate(angle)
         
         # Return the clip (rotated or unchanged)

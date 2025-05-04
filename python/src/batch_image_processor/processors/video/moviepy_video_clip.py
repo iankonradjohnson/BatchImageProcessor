@@ -5,11 +5,13 @@ video compositing, video processing, and creation.
 """
 
 import os
-from typing import Optional, List, Dict, Any
+import subprocess
+from typing import Optional, List, Dict, Any, Tuple
 import moviepy
 from moviepy import VideoFileClip, concatenate_videoclips, CompositeVideoClip
 
 from batch_image_processor.processors.video.video_clip import VideoClip
+from moviepy.video.fx.Resize import Resize
 from moviepy.video.fx.Rotate import Rotate
 
 
@@ -47,7 +49,7 @@ class MoviePyVideoClip(VideoClip):
                         elif 'rotation of 180.00 degrees' in display_matrix:
                             self._rotation = 180
                         print(f"Detected rotation from metadata: {self._rotation} degrees")
-        
+
     def rotate(self, angle: int) -> 'VideoClip':
         """
         Rotate the video by the specified angle.
@@ -58,40 +60,14 @@ class MoviePyVideoClip(VideoClip):
         Returns:
             The rotated video clip (self)
         """
-        # Import and use the Rotate FX class
-        # Use the Rotate effect from moviepy
-        from moviepy.video.fx.Rotate import Rotate
-        
-        # Apply the rotation effect
+        # Apply the rotation effect correctly
         self._clip = Rotate(angle, unit='deg').apply(self._clip)
         
-        # Update the rotation metadata
-        if self._rotation is None:
-            self._rotation = angle
-        else:
-            self._rotation = (self._rotation + angle) % 360
-            
-        return self
+        # Update rotation metadata - add new angle to existing rotation
+        current_rotation = self._rotation or 0
+        self._rotation = (current_rotation + angle) % 360
         
-    def crop(self, x: int, y: int, width: int, height: int) -> 'VideoClip':
-        """
-        Crop the video to the specified region.
-
-        Args:
-            x: The x-coordinate of the top-left corner of the region
-            y: The y-coordinate of the top-left corner of the region
-            width: The width of the region
-            height: The height of the region
-            
-        Returns:
-            The cropped video clip (self)
-        """
-        # Import and use the Crop FX class
-        # In MoviePy 2.1.1, we need to use the Effect class pattern
-        from moviepy.video.fx.Crop import Crop
-        
-        # Apply the crop effect
-        self._clip = Crop(x1=x, y1=y, x2=x+width, y2=y+height).apply(self._clip)
+        print(f"Rotated by {angle} degrees, new rotation metadata: {self._rotation}")
         return self
         
     def resize(self, width: Optional[int] = None, height: Optional[int] = None) -> 'VideoClip':
@@ -121,7 +97,7 @@ class MoviePyVideoClip(VideoClip):
         # Apply the resize effect
         self._clip = Resize(new_size=new_size).apply(self._clip)
         return self
-        
+
     def save(self, output_path: str) -> None:
         """
         Save the video to the specified path.
@@ -131,25 +107,20 @@ class MoviePyVideoClip(VideoClip):
         """
         # Ensure output directory exists
         os.makedirs(os.path.dirname(output_path), exist_ok=True)
-        
-        # Print dimensions before saving
-        original_width = self.width
-        original_height = self.height
-        print(f"Saving video with dimensions: width={original_width}, height={original_height}, size={self._clip.size}")
-        
-        # MoviePy automatically passes parameters to ffmpeg under the hood
-        # Using resize with original dimensions ensures we maintain aspect ratio
-        from moviepy.video.fx.Resize import Resize
-        clip_to_save = Resize(new_size=(original_width, original_height)).apply(self._clip)
-        
-        # Save the video with proper codec settings
-        clip_to_save.write_videofile(
-            output_path,
-            codec='libx264',
-            audio_codec='aac',
-            preset='medium',  # Balance between encoding speed and quality
-        )
-        
+
+        w, h = self._clip.size
+        print(f"Saving: current size = ({w}, {h}), orientation = {self.orientation}, rotation = {self._rotation}")
+
+        # If MoviePy shows it as landscape, but our metadata says it's portrait, fix dimensions
+        if self.orientation == "portrait" and w > h:
+            print("Fixing: clip is portrait, but dimensions are landscape. Swapping dimensions.")
+            self._clip = Resize(new_size=(h, w)).apply(self._clip)
+            print(f"After dimension swap: size = {self._clip.size}")
+
+        # Save the video
+        print(f"Writing video to {output_path} with size {self._clip.size}")
+        self._clip.write_videofile(output_path)
+
     def close(self) -> None:
         """Close the video clip and release resources."""
         if hasattr(self, '_clip') and self._clip is not None:
@@ -180,6 +151,15 @@ class MoviePyVideoClip(VideoClip):
     def rotation(self) -> Optional[int]:
         """Get the rotation angle from metadata, if available."""
         return self._rotation
+
+    @property
+    def orientation(self) -> str:
+        if self._rotation in (90, 270, -90):
+            return "portrait"
+        elif self._clip.h > self._clip.w:
+            return "portrait"
+        else:
+            return "landscape"
     
     @property
     def metadata(self) -> Dict[str, Any]:
@@ -222,36 +202,3 @@ class MoviePyVideoClip(VideoClip):
         # Write with optimal settings
         final_clip.write_videofile(output_path)
         final_clip.close()
-    
-    def overlay(self, clip: "MoviePyVideoClip", x: int, y: int, 
-                duration: Optional[float] = None) -> "MoviePyVideoClip":
-        """
-        Overlay another clip on top of this clip at the specified position.
-
-        Args:
-            clip: The clip to overlay
-            x: X-coordinate of the overlay position
-            y: Y-coordinate of the overlay position
-            duration: Optional duration to limit the overlay
-            
-        Returns:
-            A new composite clip
-        """
-        # Create a clip with the overlay positioned at (x,y)
-        overlay_clip = clip._clip.set_position((x, y))
-        
-        # Limit the duration if specified
-        if duration is not None:
-            overlay_clip = overlay_clip.set_duration(min(duration, clip._clip.duration))
-        
-        # Create a composite clip with both clips
-        composite = CompositeVideoClip([self._clip, overlay_clip])
-        
-        # Create a new MoviePyVideoClip from the composite
-        result = MoviePyVideoClip.__new__(MoviePyVideoClip)
-        result.file_path = self.file_path  # Use the same file path
-        result._clip = composite
-        result._rotation = self._rotation
-        result._metadata = self._metadata.copy()
-        
-        return result

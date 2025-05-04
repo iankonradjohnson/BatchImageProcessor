@@ -83,6 +83,7 @@ class VideoPipeline(MediaPipeline[VideoClip]):
             
         except Exception as e:
             self.logger.error(f"Error processing video {filepath}: {str(e)}")
+            raise e
             
     def is_video(self, file_path: str) -> bool:
         """
