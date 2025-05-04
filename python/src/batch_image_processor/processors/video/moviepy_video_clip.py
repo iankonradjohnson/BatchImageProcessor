@@ -1,11 +1,6 @@
-"""
-Implementation of VideoClip interface using MoviePy.
-MoviePy is a Python library for video editing: cutting, concatenations, title insertions,
-video compositing, video processing, and creation.
-"""
-
 import os
 import subprocess
+import numpy as np
 from typing import Optional, List, Dict, Any, Tuple
 import moviepy
 from moviepy import VideoFileClip, concatenate_videoclips, CompositeVideoClip
@@ -16,15 +11,8 @@ from moviepy.video.fx.Rotate import Rotate
 
 
 class MoviePyVideoClip(VideoClip):
-    """Implementation of VideoClip interface using MoviePy."""
 
     def __init__(self, file_path: str):
-        """
-        Initialize the VideoClip with the path to a video file.
-
-        Args:
-            file_path: The path to the video file
-        """
         self.file_path = file_path
         self._clip = VideoFileClip(file_path)
         self._rotation = None  # Store rotation metadata
@@ -51,15 +39,6 @@ class MoviePyVideoClip(VideoClip):
                         print(f"Detected rotation from metadata: {self._rotation} degrees")
 
     def rotate(self, angle: int) -> 'VideoClip':
-        """
-        Rotate the video by the specified angle.
-        
-        Args:
-            angle: Rotation angle in degrees
-            
-        Returns:
-            The rotated video clip (self)
-        """
         # Apply the rotation effect correctly
         self._clip = Rotate(angle, unit='deg').apply(self._clip)
         
@@ -71,16 +50,6 @@ class MoviePyVideoClip(VideoClip):
         return self
         
     def resize(self, width: Optional[int] = None, height: Optional[int] = None) -> 'VideoClip':
-        """
-        Resize the video to the specified dimensions.
-
-        Args:
-            width: The new width of the video
-            height: The new height of the video
-            
-        Returns:
-            The resized video clip (self)
-        """
         # Import and use the Resize FX class
         # In MoviePy 2.1.1, we need to use the Effect class pattern
         from moviepy.video.fx.Resize import Resize
@@ -99,12 +68,6 @@ class MoviePyVideoClip(VideoClip):
         return self
 
     def save(self, output_path: str) -> None:
-        """
-        Save the video to the specified path.
-
-        Args:
-            output_path: The path to save the video to
-        """
         # Ensure output directory exists
         os.makedirs(os.path.dirname(output_path), exist_ok=True)
 
@@ -169,36 +132,23 @@ class MoviePyVideoClip(VideoClip):
             self._metadata = dict(self._clip.reader.infos)
         return self._metadata
     
+    def get_frame(self, t: float) -> np.ndarray:
+        return self._clip.get_frame(t)
+    
     @classmethod
     def load(cls, file_path: str) -> 'VideoClip':
-        """
-        Load a video from a file.
-        
-        Args:
-            file_path: Path to the video file
-            
-        Returns:
-            A new video clip object
-        """
         return cls(file_path)
     
     @staticmethod
     def concatenate(clips: List["MoviePyVideoClip"], output_path: str) -> None:
-        """
-        Concatenate multiple video clips and save to a file.
-
-        Args:
-            clips: List of MoviePyVideoClip objects to concatenate
-            output_path: Path to save the concatenated video
-        """
         moviepy_clips = [clip._clip for clip in clips]
-        
-        # Use concatenate_videoclips
         final_clip = concatenate_videoclips(moviepy_clips)
-        
-        # Ensure output directory exists
         os.makedirs(os.path.dirname(output_path), exist_ok=True)
-        
-        # Write with optimal settings
         final_clip.write_videofile(output_path)
         final_clip.close()
+        
+    def subclip(self, start_time: float, end_time: float) -> 'VideoClip':
+        subclip = self._clip.subclip(start_time, end_time)
+        new_clip = MoviePyVideoClip(self.file_path)
+        new_clip._clip = subclip
+        return new_clip
