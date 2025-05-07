@@ -7,10 +7,10 @@ interface for video processing operations using the VideoClip interface.
 
 from typing import Union, List
 from batch_image_processor.processors.media_processor import MediaProcessor
-from batch_image_processor.processors.video.video_clip import VideoClip
+from batch_image_processor.processors.video.video_clip import VideoClipInterface
 
 
-class VideoProcessor(MediaProcessor[VideoClip]):
+class VideoProcessor(MediaProcessor[VideoClipInterface]):
     """
     Base class for video processors.
     
@@ -19,7 +19,7 @@ class VideoProcessor(MediaProcessor[VideoClip]):
     specific video processing algorithms.
     """
     
-    def process(self, clip: VideoClip) -> Union[VideoClip, List[VideoClip], None]:
+    def process(self, clip: VideoClipInterface) -> Union[VideoClipInterface, List[VideoClipInterface], None]:
         """
         Process the video clip.
         

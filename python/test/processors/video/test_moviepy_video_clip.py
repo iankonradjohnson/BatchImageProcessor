@@ -6,7 +6,7 @@ import os
 import unittest
 from unittest.mock import patch, MagicMock
 
-from batch_image_processor.processors.video.moviepy_video_clip import MoviePyVideoClip
+from batch_image_processor.processors.video.moviepy_video_clip import MoviePyVideoClipInterface
 
 
 class TestMoviePyVideoClip(unittest.TestCase):
@@ -27,7 +27,7 @@ class TestMoviePyVideoClip(unittest.TestCase):
         
         # Create a MoviePyVideoClip instance
         self.test_file_path = "/path/to/test/video.mp4"
-        self.video_clip = MoviePyVideoClip(self.test_file_path)
+        self.video_clip = MoviePyVideoClipInterface(self.test_file_path)
     
     def test_initialization(self):
         """Test that the MoviePyVideoClip is initialized properly."""
@@ -127,22 +127,22 @@ class TestMoviePyVideoClip(unittest.TestCase):
             mock_init.return_value = None
             
             # Test the load class method
-            clip = MoviePyVideoClip.load(self.test_file_path)
+            clip = MoviePyVideoClipInterface.load(self.test_file_path)
             
             # Verify __init__ was called with the file path
             mock_init.assert_called_once_with(self.test_file_path)
             
             # Verify a MoviePyVideoClip instance was returned
-            self.assertIsInstance(clip, MoviePyVideoClip)
+            self.assertIsInstance(clip, MoviePyVideoClipInterface)
     
     @patch('moviepy.editor.concatenate_videoclips')
     @patch('os.makedirs')
     def test_concatenate(self, mock_makedirs, mock_concatenate):
         """Test the concatenate static method."""
         # Create test clips
-        clip1 = MagicMock(spec=MoviePyVideoClip)
+        clip1 = MagicMock(spec=MoviePyVideoClipInterface)
         clip1._clip = MagicMock()
-        clip2 = MagicMock(spec=MoviePyVideoClip)
+        clip2 = MagicMock(spec=MoviePyVideoClipInterface)
         clip2._clip = MagicMock()
         
         # Configure mock for concatenate_videoclips
@@ -151,7 +151,7 @@ class TestMoviePyVideoClip(unittest.TestCase):
         
         # Test concatenating clips
         output_path = "/path/to/output/concatenated.mp4"
-        MoviePyVideoClip.concatenate([clip1, clip2], output_path)
+        MoviePyVideoClipInterface.concatenate([clip1, clip2], output_path)
         
         # Verify concatenate_videoclips was called with the right clips
         mock_concatenate.assert_called_once()
@@ -170,7 +170,7 @@ class TestMoviePyVideoClip(unittest.TestCase):
         """Test the overlay method."""
         with patch('moviepy.editor.CompositeVideoClip') as mock_composite:
             # Create a test overlay clip
-            overlay_clip = MagicMock(spec=MoviePyVideoClip)
+            overlay_clip = MagicMock(spec=MoviePyVideoClipInterface)
             overlay_clip._clip = MagicMock()
             overlay_clip._clip.set_position.return_value = "positioned_clip"
             
@@ -191,7 +191,7 @@ class TestMoviePyVideoClip(unittest.TestCase):
             mock_composite.assert_called_once()
             
             # Verify the result is a MoviePyVideoClip with the correct properties
-            self.assertIsInstance(result, MoviePyVideoClip)
+            self.assertIsInstance(result, MoviePyVideoClipInterface)
             self.assertEqual(result._clip, composite_clip)
             self.assertEqual(result.file_path, self.video_clip.file_path)
             self.assertEqual(result._rotation, self.video_clip._rotation)

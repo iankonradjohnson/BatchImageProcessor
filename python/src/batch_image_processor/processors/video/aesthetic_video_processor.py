@@ -4,7 +4,7 @@ import math
 from aesthetic_predictor import AestheticPredictor
 
 from batch_image_processor.processors.video.video_processor import VideoProcessor
-from batch_image_processor.processors.video.video_clip import VideoClip
+from batch_image_processor.processors.video.video_clip import VideoClipInterface
 
 
 class AestheticVideoProcessor(VideoProcessor):
@@ -20,7 +20,7 @@ class AestheticVideoProcessor(VideoProcessor):
         self.sample_rate = sample_rate
         self.min_segment_duration = min_segment_duration
 
-    def process(self, clip: VideoClip) -> Union[VideoClip, List[VideoClip], None]:
+    def process(self, clip: VideoClipInterface) -> Union[VideoClipInterface, List[VideoClipInterface], None]:
         frames_to_analyze = self._get_frames_to_analyze(clip)
         
         scores = self._score_frames(clip, frames_to_analyze)
@@ -34,13 +34,13 @@ class AestheticVideoProcessor(VideoProcessor):
         
         return result_clips if result_clips else None
     
-    def _get_frames_to_analyze(self, clip: VideoClip) -> List[float]:
+    def _get_frames_to_analyze(self, clip: VideoClipInterface) -> List[float]:
         duration = clip.duration
         num_frames = math.ceil(duration * self.sample_rate)
         
         return [i * (duration / num_frames) for i in range(num_frames)]
     
-    def _score_frames(self, clip: VideoClip, timestamps: List[float]) -> List[float]:
+    def _score_frames(self, clip: VideoClipInterface, timestamps: List[float]) -> List[float]:
         scores = []
         
         for ts in timestamps:
@@ -50,6 +50,10 @@ class AestheticVideoProcessor(VideoProcessor):
             pil_frame = Image.fromarray(frame.astype('uint8'))
             
             score = self.predictor.predict(pil_frame)
+
+            pil_frame.show()
+
+            print(f"Score is {score}")
             scores.append(score)
         
         return scores
@@ -80,12 +84,12 @@ class AestheticVideoProcessor(VideoProcessor):
         
         return good_segments
     
-    def _extract_segments(self, clip: VideoClip, segments: List[tuple]) -> List[VideoClip]:
+    def _extract_segments(self, clip: VideoClipInterface, segments: List[tuple]) -> List[VideoClipInterface]:
         result_clips = []
         
         for start_time, end_time in segments:
             try:
-                subclip = clip.subclip(start_time, end_time)
+                subclip = clip.subclipped(start_time, end_time)
                 result_clips.append(subclip)
             except AttributeError:
                 raise ValueError(f"Subclipping not supported for clip type: {type(clip)}")

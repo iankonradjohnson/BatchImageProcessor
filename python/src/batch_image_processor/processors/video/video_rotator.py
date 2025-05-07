@@ -2,7 +2,7 @@
 
 from typing import Literal
 
-from batch_image_processor.processors.video.video_clip import VideoClip
+from batch_image_processor.processors.video.video_clip import VideoClipInterface
 from batch_image_processor.processors.video.video_processor import VideoProcessor
 
 
@@ -18,7 +18,7 @@ class AutoOrientationResolver(VideoProcessor):
         self.rotation_direction = rotation_direction
         self.target_orientation = target_orientation
     
-    def process(self, clip: VideoClip) -> VideoClip:
+    def process(self, clip: VideoClipInterface) -> VideoClipInterface:
         """
         Process the video clip by rotating it based on the target orientation.
         

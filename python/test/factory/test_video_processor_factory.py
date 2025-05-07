@@ -10,7 +10,7 @@ from typing import Dict, Any
 
 from batch_image_processor.factory.video_processor_factory import VideoProcessorFactory
 from batch_image_processor.processors.video.video_processor import VideoProcessor
-from batch_image_processor.processors.video.video_clip import VideoClip
+from batch_image_processor.processors.video.video_clip import VideoClipInterface
 
 
 # Create a mock video processor for testing
@@ -18,7 +18,7 @@ class MockVideoProcessor(VideoProcessor):
     def __init__(self, **kwargs):
         self.config = kwargs
         
-    def process(self, clip: VideoClip) -> VideoClip:
+    def process(self, clip: VideoClipInterface) -> VideoClipInterface:
         return clip
 
 

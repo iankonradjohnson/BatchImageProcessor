@@ -11,30 +11,27 @@ input_file = "/Users/iankonradjohnson/Library/CloudStorage/GoogleDrive-iankonrad
 output_dir = "/Users/iankonradjohnson/Library/CloudStorage/GoogleDrive-iankonradjohnson@gmail.com/My Drive/base/abacus/ContentLibrary/books/TheGeorgianPeriod/videos/aesthetic_filtered"
 
 def process_video():
-    # Ensure input file exists
     if not os.path.exists(input_file):
         print(f"Error: Input file not found: {input_file}")
         return
     
-    # Get the directory containing the input file
     input_dir = os.path.dirname(input_file)
     
-    # Create output directory if it doesn't exist
     os.makedirs(output_dir, exist_ok=True)
     
-    # Initialize the aesthetic predictor
     predictor = AestheticPredictor()
-    
-    # Run the batch processor
+
     BatchProcessor(
         input_dir=input_dir,
         output_dir=output_dir,
         processors=[
-            AestheticVideoProcessor(
-                aesthetic_predictor=predictor,
-            )
+            # AutoOrientationResolver(
+            #     rotation_direction="left",
+            #     target_orientation="vertical"
+            # ),
+            AestheticVideoProcessor(AestheticPredictor())
         ],
-        pipeline_class=VideoPipeline,
+        pipeline_class=VideoPipeline
     ).batch_process()
 
 if __name__ == "__main__":

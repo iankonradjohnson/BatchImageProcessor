@@ -3,7 +3,7 @@ from typing import Optional, Any, Union, List
 import numpy as np
 
 
-class VideoClip(ABC):
+class VideoClipInterface(ABC):
     @property
     @abstractmethod
     def width(self) -> int:
@@ -38,7 +38,7 @@ class VideoClip(ABC):
         pass
     
     @abstractmethod
-    def rotate(self, angle: int) -> 'VideoClip':
+    def rotate(self, angle: int) -> 'VideoClipInterface':
         pass
     
     @abstractmethod
@@ -50,10 +50,10 @@ class VideoClip(ABC):
         pass
     
     @abstractmethod
-    def subclip(self, start_time: float, end_time: float) -> 'VideoClip':
+    def subclipped(self, start_time: float, end_time: float) -> 'VideoClipInterface':
         pass
     
     @classmethod
     @abstractmethod
-    def load(cls, file_path: str) -> 'VideoClip':
+    def load(cls, file_path: str) -> 'VideoClipInterface':
         pass

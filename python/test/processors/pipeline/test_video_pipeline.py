@@ -12,7 +12,7 @@ from unittest.mock import MagicMock, patch
 
 from batch_image_processor.processors.pipeline.video_pipeline import VideoPipeline
 from batch_image_processor.processors.video.video_processor import VideoProcessor
-from batch_image_processor.processors.video.video_clip import VideoClip
+from batch_image_processor.processors.video.video_clip import VideoClipInterface
 
 
 class TestVideoPipeline(unittest.TestCase):
@@ -58,7 +58,7 @@ class TestVideoPipeline(unittest.TestCase):
     def test_process_and_save(self):
         """Test processing and saving a video."""
         # Create a mock VideoClip
-        mock_clip = MagicMock(spec=VideoClip)
+        mock_clip = MagicMock(spec=VideoClipInterface)
         
         # Mock the create_video_clip function
         with patch('batch_image_processor.processors.pipeline.video_pipeline.create_video_clip',
@@ -85,7 +85,7 @@ class TestVideoPipeline(unittest.TestCase):
     def test_filtered_video(self):
         """Test processing a video that gets filtered out."""
         # Create a mock VideoClip
-        mock_clip = MagicMock(spec=VideoClip)
+        mock_clip = MagicMock(spec=VideoClipInterface)
         
         # Mock the create_video_clip function
         with patch('batch_image_processor.processors.pipeline.video_pipeline.create_video_clip',
@@ -112,7 +112,7 @@ class TestVideoPipeline(unittest.TestCase):
     def test_is_video(self):
         """Test checking if a file is a valid video."""
         # Create a mock VideoClip with valid duration
-        mock_clip = MagicMock(spec=VideoClip)
+        mock_clip = MagicMock(spec=VideoClipInterface)
         mock_clip.duration = 10  # Valid duration
         
         # Mock the create_video_clip function
