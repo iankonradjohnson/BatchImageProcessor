@@ -128,7 +128,22 @@ class MoviePyVideoClipInterface(VideoClipInterface):
         return self._metadata
 
     def get_frame(self, t: float) -> np.ndarray:
-        return self._clip.get_frame(t)
+        # Get the original frame
+        frame = self._clip.get_frame(t)
+        
+        # Simple fix for portrait videos - just swap height and width
+        if self.orientation == "portrait" and frame.shape[1] > frame.shape[0]:
+            # Import here to avoid circular imports
+            from PIL import Image
+            
+            # Convert to PIL, resize to swapped dimensions, and convert back
+            img = Image.fromarray(frame.astype('uint8'), 'RGB')
+            # Just swap height and width (h,w instead of w,h)
+            h, w = frame.shape[0], frame.shape[1]
+            img = img.resize((h, w))
+            frame = np.array(img)
+            
+        return frame
 
     @classmethod
     def load(cls, file_path: str) -> VideoClipInterface:

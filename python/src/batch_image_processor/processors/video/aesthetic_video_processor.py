@@ -1,64 +1,30 @@
 import numpy as np
-from typing import List, Union, Optional, Dict, Any
+from typing import List, Union, Optional, Dict, Any, Protocol
 import math
 from aesthetic_predictor import AestheticPredictor
+import abc
 
 from batch_image_processor.processors.video.video_processor import VideoProcessor
 from batch_image_processor.processors.video.video_clip import VideoClipInterface
 
 
-class AestheticVideoProcessor(VideoProcessor):
-    def __init__(
-        self, 
-        aesthetic_predictor: AestheticPredictor,
-        threshold: float = 5.0,
-        sample_rate: float = 1.0,
-        min_segment_duration: float = 1
-    ):
-        self.predictor = aesthetic_predictor
+class SegmentDetectionStrategy(abc.ABC):
+    """Base strategy for detecting segments in a video based on aesthetic scores."""
+    
+    def __init__(self, threshold: float, min_segment_duration: float):
         self.threshold = threshold
-        self.sample_rate = sample_rate
         self.min_segment_duration = min_segment_duration
-
-    def process(self, clip: VideoClipInterface) -> Union[VideoClipInterface, List[VideoClipInterface], None]:
-        frames_to_analyze = self._get_frames_to_analyze(clip)
-        
-        scores = self._score_frames(clip, frames_to_analyze)
-        
-        good_segments = self._find_good_segments(scores, clip.duration)
-        
-        if not good_segments:
-            return None
-        
-        result_clips = self._extract_segments(clip, good_segments)
-        
-        return result_clips if result_clips else None
     
-    def _get_frames_to_analyze(self, clip: VideoClipInterface) -> List[float]:
-        duration = clip.duration
-        num_frames = math.ceil(duration * self.sample_rate)
-        
-        return [i * (duration / num_frames) for i in range(num_frames)]
-    
-    def _score_frames(self, clip: VideoClipInterface, timestamps: List[float]) -> List[float]:
-        scores = []
-        
-        for ts in timestamps:
-            frame = clip.get_frame(ts)
-            
-            from PIL import Image
-            pil_frame = Image.fromarray(frame.astype('uint8'))
-            
-            score = self.predictor.predict(pil_frame)
+    @abc.abstractmethod
+    def find_segments(self, scores: List[float], duration: float) -> List[tuple]:
+        """Find segments that meet the aesthetic criteria."""
+        pass
 
-            pil_frame.show()
 
-            print(f"Score is {score}")
-            scores.append(score)
-        
-        return scores
+class BasicSegmentDetectionStrategy(SegmentDetectionStrategy):
+    """Detects individual segments that exceed the threshold score."""
     
-    def _find_good_segments(self, scores: List[float], duration: float) -> List[tuple]:
+    def find_segments(self, scores: List[float], duration: float) -> List[tuple]:
         good_segments = []
         segment_start = None
         time_per_score = duration / len(scores)
@@ -83,6 +49,109 @@ class AestheticVideoProcessor(VideoProcessor):
                 good_segments.append((segment_start, segment_end))
         
         return good_segments
+
+
+class CombinedSegmentDetectionStrategy(SegmentDetectionStrategy):
+    """Detects and combines adjacent segments that exceed the threshold score."""
+    
+    def find_segments(self, scores: List[float], duration: float) -> List[tuple]:
+        # First get basic segments
+        basic_strategy = BasicSegmentDetectionStrategy(self.threshold, self.min_segment_duration)
+        segments = basic_strategy.find_segments(scores, duration)
+        
+        if not segments:
+            return []
+            
+        # Then combine adjacent segments
+        time_per_score = duration / len(scores)
+        combined_segments = []
+        current_start, current_end = segments[0]
+        
+        for i in range(1, len(segments)):
+            next_start, next_end = segments[i]
+            
+            # If this segment starts exactly where the previous one ended (or very close)
+            if abs(next_start - current_end) < time_per_score:
+                # Extend the current segment
+                current_end = next_end
+            else:
+                # Add the current segment and start a new one
+                combined_segments.append((current_start, current_end))
+                current_start, current_end = next_start, next_end
+        
+        # Add the last segment
+        combined_segments.append((current_start, current_end))
+        return combined_segments
+
+
+class AestheticVideoProcessor(VideoProcessor):
+    def __init__(
+        self, 
+        aesthetic_predictor: AestheticPredictor,
+        threshold: float = 5.0,
+        sample_rate: float = 1.0,
+        min_segment_duration: float = 1,
+        combine_adjacent_segments: bool = False
+    ):
+        self.predictor = aesthetic_predictor
+        self.threshold = threshold
+        self.sample_rate = sample_rate
+        self.min_segment_duration = min_segment_duration
+        
+        # Select the appropriate segment detection strategy
+        if combine_adjacent_segments:
+            self.segment_strategy = CombinedSegmentDetectionStrategy(threshold, min_segment_duration)
+        else:
+            self.segment_strategy = BasicSegmentDetectionStrategy(threshold, min_segment_duration)
+
+    def process(self, clip: VideoClipInterface) -> Union[VideoClipInterface, List[VideoClipInterface], None]:
+        frames_to_analyze = self._get_frames_to_analyze(clip)
+        
+        scores = self._score_frames(clip, frames_to_analyze)
+        
+        # Use the selected strategy to find segments
+        good_segments = self.segment_strategy.find_segments(scores, clip.duration)
+        
+        if not good_segments:
+            return None
+        
+        result_clips = self._extract_segments(clip, good_segments)
+        
+        return result_clips if result_clips else None
+    
+    def _get_frames_to_analyze(self, clip: VideoClipInterface) -> List[float]:
+        duration = clip.duration
+        num_frames = math.ceil(duration * self.sample_rate)
+        
+        return [i * (duration / num_frames) for i in range(num_frames)]
+    
+    def _score_frames(self, clip: VideoClipInterface, timestamps: List[float]) -> List[float]:
+        scores = []
+        
+        for ts in timestamps:
+            # The frame will now be oriented correctly from get_frame
+            frame = clip.get_frame(ts)
+            
+            # Debug information
+            print(f"Frame shape: {frame.shape}")
+            print(f"Clip dimensions: width={clip.width}, height={clip.height}")
+            print(f"Clip orientation: {clip.orientation}, rotation: {clip.rotation}")
+            
+            from PIL import Image
+            
+            # Convert to PIL image
+            pil_frame = Image.fromarray(frame.astype('uint8'), 'RGB')
+            
+            # Use the frame for prediction
+            score = self.predictor.predict(pil_frame)
+            
+            # Show the image
+            # pil_frame.show()
+            
+            print(f"Score is {score}")
+            scores.append(score)
+        
+        return scores
     
     def _extract_segments(self, clip: VideoClipInterface, segments: List[tuple]) -> List[VideoClipInterface]:
         result_clips = []
