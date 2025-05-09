@@ -14,6 +14,7 @@ from batch_image_processor.processors.video.video_processor import VideoProcesso
 from batch_image_processor.processors.video.video_rotator import AutoOrientationResolver
 from batch_image_processor.processors.video.moviepy_video_clip import MoviePyVideoClipInterface
 from batch_image_processor.processors.video.aesthetic_video_processor import AestheticVideoProcessor
+from batch_image_processor.processors.video.warp_stabilizer import WarpStabilizer
 
 
 class VideoProcessorFactory(MediaProcessorFactory[VideoClipInterface]):
@@ -48,3 +49,4 @@ class VideoProcessorFactory(MediaProcessorFactory[VideoClipInterface]):
 
 VideoProcessorFactory.register_processor("VideoRotator", AutoOrientationResolver)
 VideoProcessorFactory.register_processor("AestheticProcessor", AestheticVideoProcessor)
+VideoProcessorFactory.register_processor("WarpStabilizer", WarpStabilizer)

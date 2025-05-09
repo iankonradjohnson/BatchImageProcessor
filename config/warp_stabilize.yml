@@ -1,0 +1,15 @@
+name: "Video Stabilization"
+description: "Stabilizes shaky camera footage using FFmpeg's vidstab filter"
+
+# Directory configuration
+directories:
+  - type: "video"
+    input_dir: "/Users/iankonradjohnson/base/abacus/ContentEngine/test_output/media/videos"
+    output_dir: "/Users/iankonradjohnson/base/abacus/ContentEngine/test_output/media/videos_processed"
+    processors:
+      - type: "WarpStabilizer"
+        shakiness: 5        # How shaky is the video (1-10)
+        smoothing: 20       # Motion smoothing factor (higher = smoother)
+        zoom: 0             # Percentage to zoom in to avoid black borders (0-100)
+        optzoom: 1          # Use optimal zoom (0=disabled, 1=enabled)
+        sharpen: 0.8        # Sharpening amount to compensate for stabilization blur (0-1)

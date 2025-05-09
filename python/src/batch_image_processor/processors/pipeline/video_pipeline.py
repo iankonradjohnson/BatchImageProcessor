@@ -12,7 +12,9 @@ import logging
 from batch_image_processor.processors.media_processor import MediaProcessor
 from batch_image_processor.processors.pipeline.image_pipeline import MediaPipeline
 from batch_image_processor.processors.video.video_clip import VideoClipInterface
-from batch_image_processor.factory.video_processor_factory import VideoProcessorFactory
+
+# Import factory at the method level to avoid circular imports
+# from batch_image_processor.factory.video_processor_factory import VideoProcessorFactory
 
 
 class VideoPipeline(MediaPipeline[VideoClipInterface]):
@@ -28,6 +30,8 @@ class VideoPipeline(MediaPipeline[VideoClipInterface]):
         self.logger = logging.getLogger(__name__)
 
     def process_and_save(self, filepath: str) -> None:
+        # Import factory at method level to avoid circular imports
+        from batch_image_processor.factory.video_processor_factory import VideoProcessorFactory
 
         try:
             split = os.path.basename(filepath).split(".")
@@ -82,6 +86,8 @@ class VideoPipeline(MediaPipeline[VideoClipInterface]):
             raise e
             
     def is_video(self, file_path: str) -> bool:
+        # Import factory at method level to avoid circular imports
+        from batch_image_processor.factory.video_processor_factory import VideoProcessorFactory
 
         try:
             clip = VideoProcessorFactory.create_video_clip(file_path)

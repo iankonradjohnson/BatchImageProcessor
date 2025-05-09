@@ -7,10 +7,11 @@ import yaml
 
 from batch_image_processor.factory.batch_processor_factory import BatchProcessorFactory
 from batch_image_processor.factory.image_processor_factory import ImageProcessorFactory
+from batch_image_processor.factory.video_processor_factory import VideoProcessorFactory
 
 
 def worker(dir_config):
-    """Process a single book."""
+    """Process a single directory of media files."""
     try:
         processor_type = dir_config.get("type")
         input_dir = dir_config["input_dir"]
@@ -20,8 +21,14 @@ def worker(dir_config):
 
         print(f"Processing directory: {input_dir}")
 
+        # Use the appropriate factory based on processor type
+        if processor_type == "video":
+            factory = VideoProcessorFactory
+        else:
+            factory = ImageProcessorFactory
+
         processors = [
-            ImageProcessorFactory.create_processor(processor_config)
+            factory.create_processor(processor_config)
             for processor_config in dir_config["processors"]
         ]
 

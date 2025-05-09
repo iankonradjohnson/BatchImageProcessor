@@ -6,6 +6,8 @@ applying a series of processors, and saving the result.
 """
 
 from batch_image_processor.processors.pipeline.image_pipeline import ImagePipeline, MediaPipeline
-from batch_image_processor.processors.pipeline.video_pipeline import VideoPipeline
 
-__all__ = ['ImagePipeline', 'VideoPipeline', 'MediaPipeline']
+# Avoid circular import by not importing VideoPipeline here
+# from batch_image_processor.processors.pipeline.video_pipeline import VideoPipeline
+
+__all__ = ['ImagePipeline', 'MediaPipeline'] # 'VideoPipeline' removed to avoid circular import

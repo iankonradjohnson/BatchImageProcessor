@@ -5,15 +5,15 @@ This module provides a factory pattern for creating batch processors
 based on configuration.
 """
 
-from typing import Dict, Any, List, Type, TypeVar, Generic, ClassVar
+from typing import List
 
 from PIL import Image
 
-from batch_image_processor.factory.image_processor_factory import ImageProcessorFactory
 from batch_image_processor.processors.media_processor import MediaProcessor
 # Import BatchProcessor at function level to avoid circular import
 # from batch_image_processor.processors.batch.batch_processor import BatchProcessor
 from batch_image_processor.processors.pipeline.image_pipeline import ImagePipeline
+from batch_image_processor.processors.video.video_clip import VideoClipInterface
 
 
 class BatchProcessorFactory:
@@ -57,8 +57,15 @@ class BatchProcessorFactory:
         # Handle SinglePage, DualPage (for backward compatibility), and ImageBatch
         if processor_type in ("Image"):
             return BatchProcessor[Image.Image](
-                input_dir, output_dir, processors, deleted_dir, copies,
+                input_dir, output_dir, processors, deleted_dir, 
                 pipeline_class=ImagePipeline
+            )
+        elif processor_type in ("video"):
+            # Import VideoPipeline here to avoid circular imports
+            from batch_image_processor.processors.pipeline.video_pipeline import VideoPipeline
+            return BatchProcessor[VideoClipInterface](
+                input_dir, output_dir, processors, deleted_dir, 
+                pipeline_class=VideoPipeline
             )
 
         raise ValueError(f"Invalid processor type: {processor_type}")
