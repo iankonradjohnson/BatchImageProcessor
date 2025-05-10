@@ -6,6 +6,7 @@ import abc
 
 from batch_image_processor.processors.video.video_processor import VideoProcessor
 from batch_image_processor.processors.video.video_clip import VideoClipInterface
+from batch_image_processor.processors.video.aesthetic_score_tracker import AestheticScoreTracker
 
 
 class SegmentDetectionStrategy(abc.ABC):
@@ -91,12 +92,19 @@ class AestheticVideoProcessor(VideoProcessor):
         threshold: float = 5.0,
         sample_rate: float = 1.0,
         min_segment_duration: float = 1,
-        combine_adjacent_segments: bool = False
+        combine_adjacent_segments: bool = False,
+        scores_output_path: Optional[str] = None
     ):
         self.predictor = aesthetic_predictor
         self.threshold = threshold
         self.sample_rate = sample_rate
         self.min_segment_duration = min_segment_duration
+        
+        # Create a score tracker to manage the scores
+        self.score_tracker = AestheticScoreTracker(scores_output_path)
+        
+        # Dictionary to map clips to their tracker IDs
+        self.clip_tracker_ids = {}
         
         # Select the appropriate segment detection strategy
         if combine_adjacent_segments:
@@ -115,7 +123,8 @@ class AestheticVideoProcessor(VideoProcessor):
         if not good_segments:
             return None
         
-        result_clips = self._extract_segments(clip, good_segments)
+        # Pass the scores to extract_segments to calculate segment-specific scores
+        result_clips = self._extract_segments(clip, good_segments, scores)
         
         return result_clips if result_clips else None
     
@@ -153,14 +162,48 @@ class AestheticVideoProcessor(VideoProcessor):
         
         return scores
     
-    def _extract_segments(self, clip: VideoClipInterface, segments: List[tuple]) -> List[VideoClipInterface]:
+    def _extract_segments(self, clip: VideoClipInterface, segments: List[tuple], 
+                        all_scores: List[float] = None) -> List[VideoClipInterface]:
         result_clips = []
         
         for start_time, end_time in segments:
             try:
                 subclip = clip.subclipped(start_time, end_time)
+                
+                # Register the clip with the score tracker if we have scores
+                if all_scores:
+                    clip_id = self.score_tracker.register_clip_with_scores(
+                        clip=subclip, 
+                        frame_scores=all_scores,
+                        segment=(start_time, end_time)
+                    )
+                    
+                    # Store the tracker ID for later association with output path
+                    self.clip_tracker_ids[id(subclip)] = clip_id
+                
                 result_clips.append(subclip)
             except AttributeError:
                 raise ValueError(f"Subclipping not supported for clip type: {type(clip)}")
         
         return result_clips
+        
+    def register_output_filepath(self, clip: VideoClipInterface, filepath: str) -> None:
+        """
+        Register the output filepath for a clip with its aesthetic score.
+        
+        Args:
+            clip: The video clip that was saved
+            filepath: The filepath where the clip was saved
+        """
+        clip_id = id(clip)
+        if clip_id in self.clip_tracker_ids:
+            tracker_id = self.clip_tracker_ids[clip_id]
+            self.score_tracker.register_output_filepath(tracker_id, filepath)
+    
+    def save_scores(self) -> None:
+        """Save the scores to the JSON file."""
+        self.score_tracker.save_scores_to_json()
+        
+    def get_scores(self) -> Dict[str, float]:
+        """Get the dictionary mapping output filepaths to scores."""
+        return self.score_tracker.get_scores()

@@ -1,0 +1,11 @@
+---
+# Configuration for Aesthetic Video Processor with score tracking
+batch_processor_factory: video_processor_factory
+processors:
+  - name: aesthetic_video_processor
+    args:
+      threshold: 5.0
+      sample_rate: 1.0
+      min_segment_duration: 2.0
+      combine_adjacent_segments: true
+      scores_output_path: output/aesthetic_scores.json

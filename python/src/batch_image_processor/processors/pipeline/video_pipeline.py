@@ -12,6 +12,7 @@ import logging
 from batch_image_processor.processors.media_processor import MediaProcessor
 from batch_image_processor.processors.pipeline.image_pipeline import MediaPipeline
 from batch_image_processor.processors.video.video_clip import VideoClipInterface
+from batch_image_processor.processors.video.aesthetic_video_processor import AestheticVideoProcessor
 
 # Import factory at the method level to avoid circular imports
 # from batch_image_processor.factory.video_processor_factory import VideoProcessorFactory
@@ -77,8 +78,19 @@ class VideoPipeline(MediaPipeline[VideoClipInterface]):
                     save_path = os.path.join(self.output_dir, f"{basename}.mp4")
                 else:
                     save_path = os.path.join(self.output_dir, f"{basename}_{i+1}.mp4")
+                
+                # Register the filepath with any AestheticVideoProcessor processors
+                for processor in self.processors:
+                    if isinstance(processor, AestheticVideoProcessor):
+                        processor.register_output_filepath(clip, save_path)
                     
                 clip.save(save_path)
+                
+                # After saving, if any processors need to update their records
+                for processor in self.processors:
+                    if hasattr(processor, 'save_scores'):
+                        processor.save_scores()
+                
                 clip.close()
             
         except Exception as e:
