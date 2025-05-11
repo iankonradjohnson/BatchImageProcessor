@@ -23,6 +23,15 @@ class AestheticScoreTracker:
         self.segment_scores = {}  # Maps clip_id -> [segment scores]
         self.filepath_scores = {}  # Maps output_path -> score
         
+        # Load existing scores if available
+        if output_json_path and os.path.exists(output_json_path):
+            try:
+                with open(output_json_path, 'r') as f:
+                    self.filepath_scores = json.load(f)
+                print(f"Loaded {len(self.filepath_scores)} existing scores from {output_json_path}")
+            except (json.JSONDecodeError, IOError) as e:
+                print(f"Error loading existing scores: {str(e)}")
+        
     def register_clip_with_scores(self, 
                                  clip: VideoClipInterface, 
                                  frame_scores: List[float], 
