@@ -34,42 +34,24 @@ class AestheticScoreTracker:
         
     def register_clip_with_scores(self, 
                                  clip: VideoClipInterface, 
-                                 frame_scores: List[float], 
-                                 segment: Optional[Tuple[float, float]] = None) -> str:
+                                 frame_scores: List[float]) -> str:
         """
-        Register a clip with its frame scores and optionally a segment timeframe.
+        Register a clip with its frame scores.
         
         Args:
             clip: The video clip
             frame_scores: List of scores for individual frames
-            segment: Optional tuple of (start_time, end_time) for the segment
             
         Returns:
             A unique ID for the clip
         """
         clip_id = str(uuid.uuid4())
         
-        # If we have a segment, calculate average score just for that segment
-        if segment and frame_scores:
-            segment_start, segment_end = segment
-            duration = clip.duration
-            time_per_score = duration / len(frame_scores)
-            
-            # Find scores within this segment's timeframe
-            start_idx = int(segment_start / time_per_score)
-            end_idx = min(int(segment_end / time_per_score) + 1, len(frame_scores))
-            segment_scores = frame_scores[start_idx:end_idx]
-            
-            if segment_scores:
-                avg_score = sum(segment_scores) / len(segment_scores)
-                self.clip_scores[clip_id] = avg_score
-                self.segment_scores[clip_id] = segment_scores
-        else:
-            # Use average of all frame scores
-            if frame_scores:
-                avg_score = sum(frame_scores) / len(frame_scores)
-                self.clip_scores[clip_id] = avg_score
-                self.segment_scores[clip_id] = frame_scores
+        # Use average of all frame scores
+        if frame_scores:
+            avg_score = sum(frame_scores) / len(frame_scores)
+            self.clip_scores[clip_id] = avg_score
+            self.segment_scores[clip_id] = frame_scores
                 
         return clip_id
     

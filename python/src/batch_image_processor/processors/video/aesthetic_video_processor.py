@@ -3,6 +3,7 @@ from typing import List, Union, Optional, Dict, Any, Protocol
 import math
 from aesthetic_predictor import AestheticPredictor
 import abc
+from PIL import Image
 
 from batch_image_processor.processors.video.video_processor import VideoProcessor
 from batch_image_processor.processors.video.video_clip import VideoClipInterface
@@ -96,7 +97,6 @@ class AestheticVideoProcessor(VideoProcessor):
         scores_output_path: Optional[str] = None
     ):
         self.predictor = aesthetic_predictor
-        self.threshold = threshold
         self.sample_rate = sample_rate
         self.min_segment_duration = min_segment_duration
         
@@ -145,9 +145,7 @@ class AestheticVideoProcessor(VideoProcessor):
             print(f"Frame shape: {frame.shape}")
             print(f"Clip dimensions: width={clip.width}, height={clip.height}")
             print(f"Clip orientation: {clip.orientation}, rotation: {clip.rotation}")
-            
-            from PIL import Image
-            
+
             # Convert to PIL image
             pil_frame = Image.fromarray(frame.astype('uint8'), 'RGB')
             
@@ -170,12 +168,18 @@ class AestheticVideoProcessor(VideoProcessor):
             try:
                 subclip = clip.subclipped(start_time, end_time)
                 
-                # Register the clip with the score tracker if we have scores
+                # For each subclip, we need to get its own scores from the source video
                 if all_scores:
+                    # Extract frames to analyze for this subclip
+                    subclip_frames = self._get_frames_to_analyze(subclip)
+                    
+                    # Score the frames for this specific subclip
+                    subclip_scores = self._score_frames(subclip, subclip_frames)
+                    
+                    # Register with just the subclip and its specific scores
                     clip_id = self.score_tracker.register_clip_with_scores(
-                        clip=subclip, 
-                        frame_scores=all_scores,
-                        segment=(start_time, end_time)
+                        clip=subclip,
+                        frame_scores=subclip_scores
                     )
                     
                     # Store the tracker ID for later association with output path

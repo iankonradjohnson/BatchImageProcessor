@@ -104,6 +104,8 @@ class ImageProcessorFactory(MediaProcessorFactory[Image.Image]):
                     left=config.get("left", 0),
                     right=config.get("right", 0),
                 )
+            elif processor_type == "ImageModeConverter":
+                return ImageModeConverter(mode=config.get("mode", "RGB"))
             else:
                 # General case - pass the entire config to the constructor
                 return processor_class(config)

@@ -1,9 +1,9 @@
 directories:
-  - input_dir: "/Users/iankonradjohnson/base/abacus/BookProjects/CountryHouseLibrary/ArchitecturalStylesForCountryHouses/tailored-upscaled/text"
-    output_dir: "/Users/iankonradjohnson/base/abacus/BookProjects/CountryHouseLibrary/ArchitecturalStylesForCountryHouses/tailored-upscaled-postprocess/text"
+  - input_dir: "/Users/iankonradjohnson/Library/CloudStorage/GoogleDrive-iankonradjohnson@gmail.com/My Drive/base/abacus/BookProjects/EntwürfeZuStadtUndLandhäusern/sorted/content_page_upscaled_threshold"
+    output_dir: "/Users/iankonradjohnson/Library/CloudStorage/GoogleDrive-iankonradjohnson@gmail.com/My Drive/base/abacus/BookProjects/EntwürfeZuStadtUndLandhäusern/sorted/final-binary"
     type: "Image"
     processors:
-      - type: "Threshold"
-        threshold_value: 185
+#      - type: "Threshold"
+#        threshold_value: 185
       - type: "ImageModeConverter"
         mode: "1"
