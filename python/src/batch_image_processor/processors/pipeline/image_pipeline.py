@@ -1,6 +1,7 @@
 import os.path
-from typing import List, TypeVar, Generic, Protocol, runtime_checkable
+from typing import List, TypeVar, Generic, Protocol, runtime_checkable, Optional
 
+import PIL
 from PIL import Image, UnidentifiedImageError
 
 from batch_image_processor.processors.media_processor import MediaProcessor
@@ -32,7 +33,10 @@ class MediaPipeline(Protocol[T]):
             output_dir: Directory to save processed files
             deleted_dir: Directory to save filtered files (optional)
         """
-        ...
+        self.processors = processors
+        self.input_dir = input_dir
+        self.output_dir = output_dir
+        self.deleted_dir = deleted_dir
         
     def process_and_save(self, filepath: str) -> None:
         """
@@ -46,16 +50,15 @@ class MediaPipeline(Protocol[T]):
         ...
 
 
-class ImagePipeline:
+class ImagePipeline(MediaPipeline[Image.Image]):
     """
     A pipeline for processing image files using PIL.
     
     This class implements the MediaPipeline protocol for PIL Image objects.
     """
     
-    def __init__(
-        self, processors: List[MediaProcessor[Image.Image]], input_dir: str, output_dir: str, deleted_dir: str = None
-    ):
+    def __init__(self, processors: List[MediaProcessor[Image.Image]], input_dir: str,
+                 output_dir: str, deleted_dir: Optional[str] = None):
         """
         Initialize the image pipeline.
         
@@ -65,10 +68,7 @@ class ImagePipeline:
             output_dir: Directory to save processed images
             deleted_dir: Directory to save filtered images (optional)
         """
-        self.processors = processors
-        self.input_dir = input_dir
-        self.output_dir = output_dir
-        self.deleted_dir = deleted_dir
+        super().__init__(processors, input_dir, output_dir, deleted_dir)
 
     def process_and_save(self, filepath: str) -> None:
         """

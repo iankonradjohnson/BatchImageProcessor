@@ -20,14 +20,10 @@ from batch_image_processor.processors.video.aesthetic_video_processor import Aes
 
 class VideoPipeline(MediaPipeline[VideoClipInterface]):
 
-    def __init__(
-        self, processors: List[MediaProcessor[VideoClipInterface]], input_dir: str, output_dir: str, deleted_dir: Optional[str] = None
-    ):
+    def __init__(self, processors: List[MediaProcessor[VideoClipInterface]], input_dir: str,
+                 output_dir: str, deleted_dir: Optional[str] = None):
 
-        self.processors = processors
-        self.input_dir = input_dir
-        self.output_dir = output_dir
-        self.deleted_dir = deleted_dir
+        super().__init__(processors, input_dir, output_dir, deleted_dir)
         self.logger = logging.getLogger(__name__)
 
     def process_and_save(self, filepath: str) -> None:

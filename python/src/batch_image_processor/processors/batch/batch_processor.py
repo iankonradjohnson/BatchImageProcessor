@@ -6,7 +6,7 @@ from typing import List, TypeVar, Generic, Type, Optional
 from tqdm import tqdm
 
 from batch_image_processor.processors.media_processor import MediaProcessor
-from batch_image_processor.processors.pipeline.image_pipeline import MediaPipeline
+from batch_image_processor.processors.pipeline.image_pipeline import MediaPipeline, ImagePipeline
 
 T = TypeVar('T')  # Generic type for the media being processed
 
@@ -19,7 +19,7 @@ class BatchProcessor(Generic[T]):
         output_dir: str, 
         processors: List[MediaProcessor[T]], 
         deleted_dir: str = None,
-            pipeline_class: Type[MediaPipeline[T]] = None
+        pipeline_class: Type[MediaPipeline[T]] = ImagePipeline
     ):
         self.input_dir = input_dir
         self.output_dir = output_dir
