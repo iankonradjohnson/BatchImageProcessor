@@ -2,6 +2,7 @@ import os
 import traceback
 from multiprocessing import Pool, cpu_count
 from typing import List, TypeVar, Generic, Type, Optional
+from functools import partial
 
 from tqdm import tqdm
 
@@ -19,18 +20,32 @@ class BatchProcessor(Generic[T]):
         output_dir: str, 
         processors: List[MediaProcessor[T]], 
         deleted_dir: str = None,
-        pipeline_class: Type[MediaPipeline[T]] = ImagePipeline
+        pipeline_class: Type[MediaPipeline[T]] = ImagePipeline,
+        parallel: bool = False
     ):
         self.input_dir = input_dir
         self.output_dir = output_dir
         self.processors = processors
         self.deleted_dir = deleted_dir
         self.pipeline_class = pipeline_class
+        self.parallel = parallel
         self.filename_li = self._get_files_from_input_dir()
 
     def batch_process(self):
-        for filename in tqdm(self.filename_li):
-            self._process_single_file(filename)
+        if self.parallel:
+            self._process_in_parallel()
+        else:
+            for filename in tqdm(self.filename_li, desc="Processing files"):
+                self._process_single_file(filename)
+
+    def _process_in_parallel(self):
+        num_workers = cpu_count()
+        with Pool(processes=num_workers) as pool:
+            list(tqdm(
+                pool.imap(self._process_single_file, self.filename_li),
+                total=len(self.filename_li),
+                desc=f"Processing files in parallel ({num_workers} workers)"
+            ))
 
     def _get_files_from_input_dir(self):
         file_list = []

@@ -24,6 +24,21 @@ class TestBatchProcessorFactory(unittest.TestCase):
         self.assertEqual(processor.output_dir, output_dir)
         self.assertEqual(processor.deleted_dir, deleted_dir)
         self.assertEqual(processor.processors, processors)
+        self.assertEqual(processor.parallel, False)  # Default value
+        
+    def test_create_batch_processor_with_parallel(self):
+        input_dir = "/path/to/input"
+        output_dir = "/path/to/output"
+        deleted_dir = "/path/to/deleted"
+        processors = [MagicMock()]
+        
+        # Test with parallel processing enabled
+        processor = BatchProcessorFactory.create_batch_processor(
+            "Image", input_dir, output_dir, processors, deleted_dir, parallel=True
+        )
+        
+        self.assertIsInstance(processor, BatchProcessor)
+        self.assertEqual(processor.parallel, True)
     
     def test_create_batch_processor_invalid_type(self):
         input_dir = "/path/to/input"
