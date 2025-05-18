@@ -24,6 +24,10 @@ class VideoPipeline(MediaPipeline[VideoClipInterface]):
                  output_dir: str, deleted_dir: Optional[str] = None):
 
         super().__init__(processors, input_dir, output_dir, deleted_dir)
+        self.processors = processors
+        self.input_dir = input_dir
+        self.output_dir = output_dir
+        self.deleted_dir = deleted_dir
         self.logger = logging.getLogger(__name__)
 
     def process_and_save(self, filepath: str) -> None:

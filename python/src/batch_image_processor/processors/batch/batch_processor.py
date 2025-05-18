@@ -39,7 +39,7 @@ class BatchProcessor(Generic[T]):
                 self._process_single_file(filename)
 
     def _process_in_parallel(self):
-        num_workers = cpu_count()
+        num_workers = round(cpu_count() * .75)
         with Pool(processes=num_workers) as pool:
             list(tqdm(
                 pool.imap(self._process_single_file, self.filename_li),
